@@ -1,6 +1,5 @@
 package tn.undefined.universalhaven.rest;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,62 +21,57 @@ import tn.undefined.universalhaven.service.DonationServiceLocal;
 import tn.undefined.universalhaven.service.PaypalServiceRemote;
 import tn.undefined.universalhaven.service.StripeServiceRemote;
 
-
 @Path("donation")
 @RequestScoped
-public class DonationRestService{
-	
-	
-	
+public class DonationRestService {
+
 	@EJB
 	PaypalServiceRemote servicePaypal;
-	
+
 	@EJB
 	StripeServiceRemote serviceStripe;
-	
+
 	@EJB
 	DonationServiceLocal serviceDonation;
-	
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Donation> getAll() {
 		return new ArrayList<Donation>();
 	}
-	
-	
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	
-	public String add(Donation donation,@QueryParam(value="method") String method , @QueryParam(value="token") String token,
-			@QueryParam(value="creditCardType") String creditCardType, @QueryParam(value="creditCardNumber") String creditCardNumber
-			,@QueryParam(value="expireMonth") int expireMonth,@QueryParam(value="expireYear") int expireYear,@QueryParam(value="cvv2") String cvv2) {
+
+	public String add(Donation donation, @QueryParam(value = "method") String method,
+			@QueryParam(value = "token") String token, @QueryParam(value = "creditCardType") String creditCardType,
+			@QueryParam(value = "creditCardNumber") String creditCardNumber,
+			@QueryParam(value = "expireMonth") int expireMonth, @QueryParam(value = "expireYear") int expireYear,
+			@QueryParam(value = "cvv2") String cvv2) {
 		if (method.equals("paypal")) {
 			System.out.println(String.valueOf(donation.getAmount()));
-			if (servicePaypal.pay(String.valueOf(donation.getAmount()), creditCardType, creditCardNumber, expireMonth, expireYear, cvv2, donation.getContributorName(),
-					
-					donation.getContributorName())) {
-					serviceDonation.add(donation);
-					return "Paiement paypal effectué et donation enregistrée";
-			}
-			else {
-				return "Echec paiement paypal";
-			}
-		}
-		else {
-			Double amountDouble = donation.getAmount();
-			int amountInt= amountDouble.intValue();
-			
-			if (serviceStripe.pay(token, amountInt, donation.getContributorName())) {
+			String reference = servicePaypal.pay(String.valueOf(donation.getAmount()), creditCardType, creditCardNumber, expireMonth,
+					expireYear, cvv2, donation.getContributorName(), donation.getContributorName());
+			if (reference.equals("") == false) {
+				donation.setPaymentMethod("paypal");
+				donation.setTransactionReference(reference);
 				serviceDonation.add(donation);
-				return "Paiement Stripe effectué et donation ajoutée";
+				return "Paypal payment successful and donation persisted";
+			} else {
+				return "Paypal payment failed";
 			}
-			return "Echec paiement Stripe";
+		} else {
+			Double amountDouble = donation.getAmount();
+			int amountInt = amountDouble.intValue();
+			String reference = serviceStripe.pay(token, amountInt, donation.getContributorName());
+			if (reference.equals("") == false) {
+				donation.setPaymentMethod("stripe");
+				donation.setTransactionReference(reference);
+				serviceDonation.add(donation);
+				return "Stripe payment successful and donation persisted";
+			}
+			return "Stripe payment failed";
 		}
 	}
-	
-	
-	
-	
+
 }

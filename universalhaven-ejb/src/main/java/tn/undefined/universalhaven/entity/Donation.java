@@ -33,6 +33,11 @@ public class Donation implements Serializable{
 	
 	private String country;
 	
+	private String transactionReference;
+	
+	private String paymentMethod;
+	
+	
 	@ManyToOne
 	
 	private FundraisingEvent fundraisingEvent;
@@ -85,6 +90,25 @@ public class Donation implements Serializable{
 	}
 	public void setFundraisingEvent(FundraisingEvent fundraisingEvent) {
 		this.fundraisingEvent = fundraisingEvent;
+	}
+	
+	
+	
+	
+	
+	
+	
+	public String getTransactionReference() {
+		return transactionReference;
+	}
+	public void setTransactionReference(String transactionReference) {
+		this.transactionReference = transactionReference;
+	}
+	public String getPaymentMethod() {
+		return paymentMethod;
+	}
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
 	}
 	@Override
 	public String toString() {

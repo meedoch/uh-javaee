@@ -13,7 +13,7 @@ import com.stripe.model.Charge;
 public class StripeService implements StripeServiceLocal, StripeServiceRemote{
 	
 	
-	public boolean pay(String token, int amount, String nomPrenom) {
+	public String pay(String token, int amount, String nomPrenom) {
 		Stripe.apiKey="sk_test_wnmKqMazFr951HJfDovuPINB";
 		amount =  amount * 100;
 		
@@ -26,11 +26,11 @@ public class StripeService implements StripeServiceLocal, StripeServiceRemote{
 
 		try {
 			Charge charge = Charge.create(params);
-			
+			return charge.getId();
 		} catch (Exception e) {
-			return false;
+			return "";
 		}
-		return true;
+		
 	}
 	
 	

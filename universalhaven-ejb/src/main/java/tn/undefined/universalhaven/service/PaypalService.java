@@ -26,7 +26,7 @@ public class PaypalService implements PaypalServiceLocal,PaypalServiceRemote {
 	
 
 	
-	public boolean pay (String total, String creditCardType, String creditCardNumber
+	public String pay (String total, String creditCardType, String creditCardNumber
 			, int expireMonth, int expireYear, String cvv2, String firstName, String lastName) {
 		CreditCard card = new CreditCard()
 			    .setType(creditCardType)
@@ -108,10 +108,10 @@ public class PaypalService implements PaypalServiceLocal,PaypalServiceRemote {
 			System.out.println("Created payment with id = "
 					+ createdPayment.getId() + " and status = "
 					+ createdPayment.getState());
-			return true;
+			return createdPayment.getId();
 		} catch (Exception e) {
 		    System.err.println(e.getMessage());
-		    return false;
+		    return "";
 		}
 	}
 }
