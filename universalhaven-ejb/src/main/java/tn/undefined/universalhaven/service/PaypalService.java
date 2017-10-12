@@ -94,7 +94,7 @@ public class PaypalService implements PaypalServiceLocal,PaypalServiceRemote {
 		
 		payment.setTransactions(transactions);
 		// Create a Credit Card
-		
+		// Test
 		FundingInstrument instrument = new FundingInstrument();
 		instrument.setCreditCard(card);
 		List<FundingInstrument> instruments=  new ArrayList<>();
