@@ -13,11 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import tn.undefined.universalhaven.enumerations.Urgency;
 
 @Entity
-public class FundraisingEvent implements Serializable {
+
+public class FundraisingEvent {
 	
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)

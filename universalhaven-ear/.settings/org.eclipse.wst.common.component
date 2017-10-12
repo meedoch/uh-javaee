@@ -8,16 +8,16 @@
         <dependent-module archiveName="universalhaven-ejb.jar" deploy-path="/" handle="module:/resource/universalhaven-ejb/universalhaven-ejb">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="rest-api-sdk.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/com/paypal/sdk/rest-api-sdk/1.13.1/rest-api-sdk-1.13.1.jar">
+        <dependent-module archiveName="rest-api-sdk.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/com/paypal/sdk/rest-api-sdk/1.13.1/rest-api-sdk-1.13.1.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="slf4j-api.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar">
+        <dependent-module archiveName="slf4j-api.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="gson.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar">
+        <dependent-module archiveName="gson.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="stripe-java.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/com/stripe/stripe-java/5.10.0/stripe-java-5.10.0.jar">
+        <dependent-module archiveName="stripe-java.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/com/stripe/stripe-java/5.21.0/stripe-java-5.21.0.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
     </wb-module>

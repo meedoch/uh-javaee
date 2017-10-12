@@ -9,10 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import tn.undefined.universalhaven.enumerations.ResourceType;
 
 @Entity
+@XmlRootElement
 public class Resource implements Serializable{
 	
 	@Id

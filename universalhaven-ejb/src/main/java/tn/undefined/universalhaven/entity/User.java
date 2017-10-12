@@ -1,5 +1,6 @@
 package tn.undefined.universalhaven.entity;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -8,14 +9,16 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import tn.undefined.universalhaven.enumerations.UserRole;
 
 @Entity
-
+@XmlRootElement
 public class User extends Person{
 	private String email;
 	private String address;

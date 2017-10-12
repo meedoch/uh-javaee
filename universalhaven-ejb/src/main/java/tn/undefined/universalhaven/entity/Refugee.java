@@ -1,15 +1,20 @@
 package tn.undefined.universalhaven.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import tn.undefined.universalhaven.enumerations.IdentityType;
 
 @Entity
 @DiscriminatorValue(value="refugee")
+@XmlRootElement
 public class Refugee extends Person{
 	
 	private IdentityType identityType;

@@ -8,12 +8,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
+@XmlRootElement
 public class Donation implements Serializable{
 	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	
 	private long id;
 	
 	private double amount;
@@ -29,6 +34,7 @@ public class Donation implements Serializable{
 	private String country;
 	
 	@ManyToOne
+	
 	private FundraisingEvent fundraisingEvent;
 	
 	
@@ -80,6 +86,35 @@ public class Donation implements Serializable{
 	public void setFundraisingEvent(FundraisingEvent fundraisingEvent) {
 		this.fundraisingEvent = fundraisingEvent;
 	}
+	@Override
+	public String toString() {
+		return "Donation [id=" + id + ", amount=" + amount + ", contributorName=" + contributorName
+				+ ", contributorEmail=" + contributorEmail + ", donationDate=" + donationDate + ", contributorAddress="
+				+ contributorAddress + ", country=" + country + ", fundraisingEvent=" + fundraisingEvent + "]";
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Donation other = (Donation) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+	
+	
+	
 	
 	
 	

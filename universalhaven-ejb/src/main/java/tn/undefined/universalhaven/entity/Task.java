@@ -12,10 +12,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import tn.undefined.universalhaven.enumerations.TaskPriority;
 import tn.undefined.universalhaven.enumerations.TaskStatus;
 @Entity
+@XmlRootElement
+
 public class Task{
 	
 	@Id
