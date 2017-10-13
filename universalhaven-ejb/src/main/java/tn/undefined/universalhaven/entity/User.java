@@ -28,6 +28,7 @@ public class User extends Person{
 	private String skills;
 	private String profession;
 	private String motivation;
+	@Enumerated(EnumType.STRING)
 	private UserRole role;
 	private boolean subscribed;
 	private String token;
@@ -102,7 +103,7 @@ public class User extends Person{
 		this.motivation = motivation;
 	}
 	
-	@Enumerated(EnumType.STRING)
+	
 	public UserRole getRole() {
 		return role;
 	}
