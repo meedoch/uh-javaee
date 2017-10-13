@@ -190,6 +190,26 @@ public class Camp implements Serializable{
 	}
 	public void setCampTasks(List<Task> campTasks) {
 		this.campTasks = campTasks;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Camp other = (Camp) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	} 
 	
 	
