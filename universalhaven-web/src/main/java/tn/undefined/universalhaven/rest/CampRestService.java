@@ -65,17 +65,17 @@ public class CampRestService {
    
 }
   @POST 
-  @Path("send")
+  @Path("/send")
   @Consumes (MediaType.APPLICATION_JSON) 
   public Response SendMail(Camp camp){ 
 	  try{
           String host ="smtp.gmail.com" ;
-          String user = "mohamedamine.mhiri@esprit.tn";
-          String pass = "*******";
+          String user = "he.flach.smok.c4@gmail.com";
+          String pass = "momo******";
           String to = "mohamedamine.mhiri@esprit.tn";
-          String from = "mohamedamine.mhiri@esprit.tn";
-          String subject = "This is confirmation number for your expertprogramming account. Please insert this number to activate your account.";
-          String messageText = "Your Is Test Email :";
+          String from = "he.flach.smok.c4@gmail.com";
+          String subject = "this number to activate your account.";
+          String messageText = "3asselama";
           boolean sessionDebug = false;
 
           Properties props = System.getProperties();
@@ -86,7 +86,7 @@ public class CampRestService {
           props.put("mail.smtp.auth", "true");
           props.put("mail.smtp.starttls.required", "true");
 
-          java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+          //java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
           Session mailSession = Session.getDefaultInstance(props, null);
           mailSession.setDebug(sessionDebug);
           Message msg = new MimeMessage(mailSession);
