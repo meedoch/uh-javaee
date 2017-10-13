@@ -7,7 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 
-import tn.undefined.universalhaven.entity.Camp; 
+import tn.undefined.universalhaven.entity.Camp;
+import tn.undefined.universalhaven.entity.Mail; 
  
 @Stateless 
 public class CampService implements CampServiceLocal,CampServiceRemote{ 
@@ -37,5 +38,18 @@ public class CampService implements CampServiceLocal,CampServiceRemote{
 	      e.printStackTrace(); 
 	      return false;  
 	    } 
-  	} 
+  	}
+  
+  
+	public boolean send(Mail mail) {
+		try {
+			em.persist(mail);
+			return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+  
   } 
