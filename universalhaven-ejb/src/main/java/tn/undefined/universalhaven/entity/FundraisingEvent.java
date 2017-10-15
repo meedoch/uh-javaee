@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import tn.undefined.universalhaven.enumerations.Urgency;
@@ -91,6 +92,7 @@ public class FundraisingEvent implements Serializable {
 	public long getId() {
 		return id;
 	}
+	@XmlAttribute(name="id",required=true)
 	public void setId(long id) {
 		this.id = id;
 	}

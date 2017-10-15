@@ -3,10 +3,12 @@ package tn.undefined.universalhaven.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.management.Query;
+import javax.persistence.Query;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -23,15 +25,23 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 	@PersistenceContext
 	private EntityManager em;
 	@Override
-	public double getAverageCompetitionDate() {
+	public double getAverageCompletionDate() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getEventCountByCountry(String country) {
+	public Map<String, Long> getEventCountByCountry() {
 		// TODO Auto-generated method stub
-		return 0;
+//		Query query = em.createQuery("SELECT f.camp.address,Count(f.id) from FundraisingEvent f" + " GROUP BY f.camp.adrress");
+		Query query = em.createQuery("SELECT c.address,count(c.id) from FundraisingEvent f join f.camp c" + " GROUP BY c.address ");
+		List<Object[]> results = query.getResultList();
+		Map<String,Long> resultMap = new HashMap<>();
+		for (Object[] result : results) {
+			resultMap.put((String) result[0], (Long) (result[1]));
+			System.out.println("country: "+(String) result[0]+" number of events: "+(Long) (result[1]));
+		}
+		return resultMap;
 	}
 
 	@Override
@@ -53,9 +63,16 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 	}
 
 	@Override
-	public List<FundraisingEvent> listEventsByUser() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<FundraisingEvent> listEventsByUser(Long idUser) {
+		Query query=em
+				.createQuery("select f from FundraisingEvent f where f.publisher.id=:idUser ");
+		query.setParameter("idUser", idUser);
+		List<FundraisingEvent> l=query.getResultList();
+		for(int i = 0 ; i< l.size() ; i++){
+			System.out.println(l.get(i).getPublisher().getId());
+			System.out.println(l.get(i).getTitle());
+		}
+		return l;
 	}
 
 	@Override
@@ -72,7 +89,7 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 
 	@Override
 	public void updateEvent(FundraisingEvent event) {
-		// TODO Auto-generated method stub
+		em.merge(event);
 		
 	}
 
@@ -96,6 +113,19 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 		}
 		
 		return listeDto;
+	}
+
+	@Override
+	public List<FundraisingEventDto> listEventsByUserDto(Long idUser) {
+		List<FundraisingEvent> liste= listEventsByUser(idUser);
+		List<FundraisingEventDto> l=new ArrayList<FundraisingEventDto>();
+		for(FundraisingEvent f:liste){
+			l.add(new FundraisingEventDto(f.getId(),f.getTitle(),
+					f.getDescription(),f.getGoal(),f.getPublishDate(),
+					f.getUrgency(),f.getFinishingDate(),
+					f.getImagePath(),f.getState(),f.getCamp().getId(),f.getCamp().getName()));
+		}
+		return l;
 	}
 
 }
