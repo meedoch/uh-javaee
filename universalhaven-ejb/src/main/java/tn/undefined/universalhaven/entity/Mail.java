@@ -1,8 +1,11 @@
 package tn.undefined.universalhaven.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+
 
 @XmlRootElement
 public class Mail implements Serializable{
@@ -12,6 +15,25 @@ public class Mail implements Serializable{
 	
 	private String recipientMail;
 	private String senderMail;
+	private String MailPassword;
+	private List<User> users;
+	
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
+
+	public String getMailPassword() {
+		return MailPassword;
+	}
+
+	public void setMailPassword(String mailPassword) {
+		MailPassword = mailPassword;
+	}
+
 	public String getSubject() {
 		return subject;
 	}

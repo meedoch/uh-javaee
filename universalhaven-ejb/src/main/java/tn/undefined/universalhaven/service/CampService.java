@@ -40,16 +40,4 @@ public class CampService implements CampServiceLocal,CampServiceRemote{
 	    } 
   	}
   
-  
-	public boolean send(Mail mail) {
-		try {
-			em.persist(mail);
-			return true;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-  
   } 
