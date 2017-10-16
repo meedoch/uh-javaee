@@ -28,6 +28,7 @@ public class User extends Person{
 	private String skills;
 	private String profession;
 	private String motivation;
+	@Enumerated(EnumType.STRING)
 	private UserRole role;
 	private boolean subscribed;
 	private String token;
@@ -51,6 +52,23 @@ public class User extends Person{
 	private Camp assignedCamp;
 	
 	
+	public User() {
+		super();
+	}
+	
+	
+	public User(Long id, String name, String surname, Date birthDate, String country, String gender) {
+		super(id, name, surname, birthDate, country, gender);
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public User(Long id) {
+		super(id);
+		// TODO Auto-generated constructor stub
+	}
+
+
 	public String getEmail() {
 		return email;
 	}
@@ -102,7 +120,7 @@ public class User extends Person{
 		this.motivation = motivation;
 	}
 	
-	@Enumerated(EnumType.STRING)
+	
 	public UserRole getRole() {
 		return role;
 	}
