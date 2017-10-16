@@ -7,20 +7,23 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import tn.undefined.universalhaven.enumerations.Urgency;
 
 @Entity
-
-public class FundraisingEvent {
+@XmlRootElement
+/*la 1ere requette par defaut se fait avec eager
+ Lazy s'execute à la demande .EX: .getCamp().getId() */
+public class FundraisingEvent implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -33,23 +36,63 @@ public class FundraisingEvent {
 	private double goal;
 	
 	private Date publishDate= new Date();
-	
+	@Enumerated(EnumType.STRING)
 	private Urgency urgency ;
 	
 	private Date finishingDate= null;
 	
 	private String imagePath;
 	
-	@OneToMany(mappedBy="fundraisingEvent")
+	@OneToMany(mappedBy="fundraisingEvent" , fetch = FetchType.LAZY)
 	private List<Donation> donations;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User publisher;
+	private String state;
+	@ManyToOne (fetch = FetchType.LAZY)
+	private Camp camp;
+
+	public FundraisingEvent() {
+		super();
+	}
 	
+	public FundraisingEvent(long id) {
+		super();
+		this.id = id;
+	}
 	
+
+	public FundraisingEvent(String title, String description, double goal, Date publishDate, Urgency urgency,
+			Date finishingDate, String imagePath, User publisher, String state, Camp camp) {
+		super();
+		this.title = title;
+		this.description = description;
+		this.goal = goal;
+		this.publishDate = publishDate;
+		this.urgency = urgency;
+		this.finishingDate = finishingDate;
+		this.imagePath = imagePath;
+		this.publisher = publisher;
+		this.state = state;
+		this.camp = camp;
+	}
+
+	public Camp getCamp() {
+		return camp;
+	}
+	public void setCamp(Camp camp) {
+		this.camp = camp;
+	}
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
 	public long getId() {
 		return id;
 	}
+	@XmlAttribute(name="id",required=true)
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -77,7 +120,7 @@ public class FundraisingEvent {
 	public void setPublishDate(Date publishDate) {
 		this.publishDate = publishDate;
 	}
-	@Enumerated(EnumType.STRING)
+	
 	public Urgency getUrgency() {
 		return urgency;
 	}
