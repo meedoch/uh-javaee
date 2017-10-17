@@ -44,8 +44,15 @@
 			<artifactId>stripe-java</artifactId>
 			<version>5.21.0</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
-
-
+	
+		
+		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
+		<dependency>
+		    <groupId>javax.mail</groupId>
+		    <artifactId>mail</artifactId>
+		    <version>1.4.4</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>

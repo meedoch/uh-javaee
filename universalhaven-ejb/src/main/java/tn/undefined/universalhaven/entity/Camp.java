@@ -67,10 +67,28 @@ public class Camp implements Serializable{
 	
 	@OneToMany(mappedBy="camp")
 	private List<Task> campTasks;
+	@OneToMany(mappedBy="camp")
+	private List<FundraisingEvent> fundraisingEvents;
 	
 	
 	
 	
+	
+	public List<FundraisingEvent> getFundraisingEvents() {
+		return fundraisingEvents;
+	}
+	public void setFundraisingEvents(List<FundraisingEvent> fundraisingEvents) {
+		this.fundraisingEvents = fundraisingEvents;
+	}
+	
+	public Camp() {
+		super();
+	}
+	
+	public Camp(long id) {
+		super();
+		this.id = id;
+	}
 	public long getId() {
 		return id;
 	}

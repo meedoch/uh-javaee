@@ -35,6 +35,26 @@ public class Person implements Serializable{
 	private String gender;
 	
 	
+	public Person() {
+		super();
+	}
+	
+	public Person(Long id) {
+		super();
+		this.id = id;
+	}
+	
+
+	public Person(Long id, String name, String surname, Date birthDate, String country, String gender) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.surname = surname;
+		this.birthDate = birthDate;
+		this.country = country;
+		this.gender = gender;
+	}
+
 	public long getId() {
 		return id;
 	}

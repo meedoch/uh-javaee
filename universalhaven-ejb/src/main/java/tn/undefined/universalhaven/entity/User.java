@@ -52,6 +52,23 @@ public class User extends Person{
 	private Camp assignedCamp;
 	
 	
+	public User() {
+		super();
+	}
+	
+	
+	public User(Long id, String name, String surname, Date birthDate, String country, String gender) {
+		super(id, name, surname, birthDate, country, gender);
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public User(Long id) {
+		super(id);
+		// TODO Auto-generated constructor stub
+	}
+
+
 	public String getEmail() {
 		return email;
 	}
