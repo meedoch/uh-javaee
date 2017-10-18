@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -58,22 +59,15 @@ public class Camp implements Serializable{
 	
 	@ManyToOne
 	private User campCreator;
-	
 	@OneToMany(mappedBy="assignedCamp")
 	private List<User> campStaff;
-	
 	@OneToMany(mappedBy="camp")
 	private List<CallForHelp> callForHelpEvents;
 	
 	@OneToMany(mappedBy="camp")
 	private List<Task> campTasks;
-	@OneToMany(mappedBy="camp")
+	@OneToMany(mappedBy="camp", fetch = FetchType.LAZY)
 	private List<FundraisingEvent> fundraisingEvents;
-	
-	
-	
-	
-	
 	public List<FundraisingEvent> getFundraisingEvents() {
 		return fundraisingEvents;
 	}

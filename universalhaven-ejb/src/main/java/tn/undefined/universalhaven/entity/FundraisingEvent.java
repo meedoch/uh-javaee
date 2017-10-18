@@ -42,14 +42,13 @@ public class FundraisingEvent implements Serializable {
 	private Date finishingDate= null;
 	
 	private String imagePath;
-	
-	@OneToMany(mappedBy="fundraisingEvent" , fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="fundraisingEvent" , fetch = FetchType.EAGER)
 	private List<Donation> donations;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne/*(fetch = FetchType.LAZY)*/
 	private User publisher;
 	private String state;
-	@ManyToOne (fetch = FetchType.LAZY)
+	@ManyToOne /*(fetch = FetchType.LAZY)*/
 	private Camp camp;
 
 	public FundraisingEvent() {
