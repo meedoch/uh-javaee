@@ -1,8 +1,11 @@
 package tn.undefined.universalhaven.rest;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
+import javax.ejb.EJB;
 import javax.faces.bean.RequestScoped;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -17,11 +20,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.Mail;
+import tn.undefined.universalhaven.entity.Person;
+import tn.undefined.universalhaven.entity.User;
+import tn.undefined.universalhaven.service.CampServiceLocal;
+import tn.undefined.universalhaven.service.MailServiceLocal;
 @Path("mail") 
 @RequestScoped 
 public class MailRestService {
-
+	@EJB 
+	  MailServiceLocal serviceMail; 
 	 @POST 
 	  @Path("/send")
 	  @Consumes (MediaType.APPLICATION_JSON) 
@@ -74,12 +83,16 @@ public class MailRestService {
 	  @Path("/newsletter")
 	  @Consumes (MediaType.APPLICATION_JSON) 
 	  public Response SendNewsLetter(Mail mail){ 
+		  //String to ="";
+		  //users += serviceMail.getSubscribedUsers();
+		 
+		  
 		  try{
 	          String host ="smtp.gmail.com" ;
-	          String user = "universalhaven@noreply.com";
+	          String user = "he.flach.smok.c4@gmail.com";
 	          String pass = "mo********";
-	          String to = "mohamedamine.mhiri@esprit.tn,plopcava@hotmail.fr";
-	          //String to = mail.getUsers();
+	          //String to = "mohamedamine.mhiri@esprit.tn,plopcava@hotmail.fr";
+	          String to = serviceMail.getSubscribedUsers();
 	          
 	          
 	          String from = "universalhaven@noreply.com";
@@ -121,6 +134,7 @@ public class MailRestService {
 	          System.out.println(ex);
 	          return Response.status(Status.NOT_ACCEPTABLE).entity("Problem of sending the NewsLetter").build();
 	      }
+		    
 
 	     
 	  }
