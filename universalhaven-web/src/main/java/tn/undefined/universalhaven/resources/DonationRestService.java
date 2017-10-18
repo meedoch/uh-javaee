@@ -1,4 +1,4 @@
-package tn.undefined.universalhaven.rest;
+package tn.undefined.universalhaven.resources;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,12 +22,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import jwt.JWTTokenNeeded;
+import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 import tn.undefined.universalhaven.entity.Donation;
 import tn.undefined.universalhaven.enumerations.UserRole;
-import tn.undefined.universalhaven.service.DonationServiceLocal;
-import tn.undefined.universalhaven.service.PaypalServiceRemote;
-import tn.undefined.universalhaven.service.StripeServiceRemote;
+import tn.undefined.universalhaven.buisness.DonationServiceLocal;
+import tn.undefined.universalhaven.buisness.PaypalServiceRemote;
+import tn.undefined.universalhaven.buisness.StripeServiceRemote;
 
 @Path("donation")
 @RequestScoped

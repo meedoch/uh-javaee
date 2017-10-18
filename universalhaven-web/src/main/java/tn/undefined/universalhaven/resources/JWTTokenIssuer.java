@@ -1,4 +1,4 @@
-package tn.undefined.universalhaven.rest;
+package tn.undefined.universalhaven.resources;
 
 import java.security.Key;
 import java.time.LocalDateTime;
@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import tn.undefined.universalhaven.enumerations.UserRole;
-import tn.undefined.universalhaven.service.UserServiceLocalMehdi;
+import tn.undefined.universalhaven.buisness.UserServiceLocalMehdi;
 import tn.undefined.universalhaven.util.KeyGenerator;
 import tn.undefined.universalhaven.util.SimpleKeyGenerator;
 

@@ -1,4 +1,4 @@
-package jwt;
+package tn.undefined.universalhaven.jwt;
 
 import io.jsonwebtoken.Jwts;
 

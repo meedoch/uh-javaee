@@ -9,6 +9,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -32,14 +33,11 @@ public class User extends Person{
 	private UserRole role;
 	private boolean subscribed;
 	private String token;
-	
-	@OneToMany(mappedBy="publisher")
+	@OneToMany(mappedBy="publisher", fetch = FetchType.LAZY)
 	private List<FundraisingEvent> fundraisingEvents;
-	
 	// Tasks li lezem ya3melhom
 	@OneToMany(mappedBy="taskExecutor")
 	private List<Task> tasksToDo;
-	
 	
 	// Tasks li 3tahom 
 	@OneToMany(mappedBy="taskAssigner")

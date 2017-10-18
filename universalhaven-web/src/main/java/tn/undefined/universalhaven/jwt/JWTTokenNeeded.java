@@ -1,4 +1,4 @@
-package jwt;
+package tn.undefined.universalhaven.jwt;
 
 import javax.ws.rs.NameBinding;
 

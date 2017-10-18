@@ -1,5 +1,4 @@
-package tn.undefined.universalhaven.service;
-
+package tn.undefined.universalhaven.buisness;
 import javax.ejb.Remote;
 
 @Remote

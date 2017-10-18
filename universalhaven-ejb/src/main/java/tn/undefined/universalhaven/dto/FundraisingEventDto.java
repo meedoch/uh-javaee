@@ -18,8 +18,8 @@ public class FundraisingEventDto implements Serializable {
 	private Date finishingDate= null;
 	private String imagePath;
 	private String state;
-	private long idCamp;
-	private String nameCamp;
+	private CampDto camp;
+	private UserDto user;
 	
 	public FundraisingEventDto() {
 		super();
@@ -39,7 +39,7 @@ public class FundraisingEventDto implements Serializable {
 	}
 	
 	public FundraisingEventDto(long id, String title, String description, double goal, Date publishDate,
-			Urgency urgency, Date finishingDate, String imagePath, String state, long idCamp, String nameCamp) {
+			Urgency urgency, Date finishingDate, String imagePath, String state, CampDto camp,UserDto user) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -50,20 +50,8 @@ public class FundraisingEventDto implements Serializable {
 		this.finishingDate = finishingDate;
 		this.imagePath = imagePath;
 		this.state = state;
-		this.idCamp = idCamp;
-		this.nameCamp = nameCamp;
-	}
-	public long getIdCamp() {
-		return idCamp;
-	}
-	public void setIdCamp(long idCamp) {
-		this.idCamp = idCamp;
-	}
-	public String getNameCamp() {
-		return nameCamp;
-	}
-	public void setNameCamp(String nameCamp) {
-		this.nameCamp = nameCamp;
+		this.camp = camp;
+		this.user = user;
 	}
 	public long getId() {
 		return id;
@@ -119,6 +107,20 @@ public class FundraisingEventDto implements Serializable {
 	public void setState(String state) {
 		this.state = state;
 	}
+	public CampDto getCamp() {
+		return camp;
+	}
+	public void setCamp(CampDto camp) {
+		this.camp = camp;
+	}
+	public UserDto getUser() {
+		return user;
+	}
+	public void setUser(UserDto user) {
+		this.user = user;
+	}
+	
+	
 	
 
 }
