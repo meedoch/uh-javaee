@@ -1,4 +1,4 @@
-package tn.undefined.universalhaven.rest;
+package tn.undefined.universalhaven.resources;
 
 import java.security.Key;
 import java.time.LocalDateTime;
@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import tn.undefined.universalhaven.enumerations.UserRole;
-import tn.undefined.universalhaven.service.UserServiceLocalMehdi;
+import tn.undefined.universalhaven.buisness.UserServiceLocalMehdi;
 import tn.undefined.universalhaven.util.KeyGenerator;
 import tn.undefined.universalhaven.util.SimpleKeyGenerator;
 
@@ -42,15 +42,15 @@ public class JWTTokenIssuer {
 	    public Response authenticateUser(@FormParam("login") String login,
 	                                     @FormParam("password") String password) {
 	        try {
-	 
+	        	System.out.println("Authenticating "+login+" -- "+password);
 	            // Authenticate the user using the credentials provided
 	            UserRole role = userService.authenticate(login, password);
-	            
+	           
 	            // Issue a token for the user
 	            String token = issueToken(login,role);
 	 
 	            // Return the token on the response
-	            return Response.ok().header("AUTHORIZED", "Bearer " + token).build();
+	            return Response.ok().entity("Bearer " + token).header("AUTHORIZED", "Bearer " + token).build();
 	 
 	        } catch (Exception e) {
 	            return Response.status(Response.Status.UNAUTHORIZED).build();

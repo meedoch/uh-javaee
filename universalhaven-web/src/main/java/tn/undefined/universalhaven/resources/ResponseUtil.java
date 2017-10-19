@@ -1,4 +1,4 @@
-package tn.undefined.universalhaven.rest;
+package tn.undefined.universalhaven.resources;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
