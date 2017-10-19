@@ -1,4 +1,4 @@
-package tn.undefined.universalhaven.rest;
+package tn.undefined.universalhaven.resources;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,8 +24,8 @@ import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.Mail;
 import tn.undefined.universalhaven.entity.Person;
 import tn.undefined.universalhaven.entity.User;
-import tn.undefined.universalhaven.service.CampServiceLocal;
-import tn.undefined.universalhaven.service.MailServiceLocal;
+import tn.undefined.universalhaven.buisness.CampServiceLocal;
+import tn.undefined.universalhaven.buisness.MailServiceLocal;
 @Path("mail") 
 @RequestScoped 
 public class MailRestService {

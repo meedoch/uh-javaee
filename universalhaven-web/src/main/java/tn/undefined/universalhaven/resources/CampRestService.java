@@ -1,4 +1,4 @@
-package tn.undefined.universalhaven.rest; 
+package tn.undefined.universalhaven.resources; 
  
 import java.util.ArrayList; 
 import java.util.List;
@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.PathParam;
 import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.Mail;
-import tn.undefined.universalhaven.service.CampServiceLocal; 
+import tn.undefined.universalhaven.buisness.CampServiceLocal; 
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
