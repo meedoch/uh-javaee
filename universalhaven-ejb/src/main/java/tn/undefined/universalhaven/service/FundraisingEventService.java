@@ -11,10 +11,13 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.persistence.TypedQuery;
 
 import tn.undefined.universalhaven.entity.User;
+import tn.undefined.universalhaven.dto.CampDto;
 import tn.undefined.universalhaven.dto.FundraisingEventDto;
+import tn.undefined.universalhaven.dto.UserDto;
 import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.Donation;
 import tn.undefined.universalhaven.entity.FundraisingEvent;
@@ -25,9 +28,16 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 	@PersistenceContext
 	private EntityManager em;
 	@Override
-	public double getAverageCompletionDate() {
-		// TODO Auto-generated method stub
-		return 0;
+	public Map<String, Double> getAverageCompletionDate() {
+		Query query = em.createQuery("SELECT c.address,AVG(DATEDIFF(f.finishingDate,f.publishDate)) from FundraisingEvent f join f.camp c" + " where f.state='Finished' GROUP BY c.address ");
+		List<Object[]> results = query.getResultList();
+		Map<String, Double> resultMap = new HashMap<>();
+		for (Object[] result : results) {
+			resultMap.put((String) result[0], (Double) (result[1]));
+			System.out.println("camp: "+(String) result[0]+" avg of completing events by day(s): "+(Double) (result[1]));
+		}
+		return resultMap ;
+		
 	}
 
 	@Override
@@ -49,7 +59,10 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 		List<FundraisingEvent> liste = ((List<FundraisingEvent>) em
 				.createQuery("from FundraisingEvent ").getResultList());
 		for(int i = 0 ; i< liste.size() ; i++){
-			System.out.println(liste.get(i).getId());
+			/*System.out.println(liste.get(i).getId());
+			System.out.println(liste.get(i).getCamp().getAddress());*/
+			//getPublisher().getId() :null pointer exception
+			//System.out.println(liste.get(i).getPublisher().getId());
 		}
 		return liste;
 //		List<FundraisingEvent> ls=new ArrayList<FundraisingEvent>();
@@ -63,10 +76,10 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 	}
 
 	@Override
-	public List<FundraisingEvent> listEventsByUser(Long idUser) {
+	public List<FundraisingEvent> listEventsByUser(User user) {/*Long idUser*/
 		Query query=em
 				.createQuery("select f from FundraisingEvent f where f.publisher.id=:idUser ");
-		query.setParameter("idUser", idUser);
+		query.setParameter("idUser", user.getId());
 		List<FundraisingEvent> l=query.getResultList();
 		for(int i = 0 ; i< l.size() ; i++){
 			System.out.println(l.get(i).getPublisher().getId());
@@ -106,24 +119,28 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 				.createQuery("from FundraisingEvent ").getResultList());
 		for(int i = 0 ; i< liste.size() ; i++){
 			System.out.println(liste.get(i).getId());
+			UserDto u=new UserDto(liste.get(i).getPublisher().getId(),liste.get(i).getPublisher().getLogin());
+			CampDto c=new CampDto(liste.get(i).getCamp().getId(), liste.get(i).getCamp().getAddress());
 			listeDto.add(new FundraisingEventDto(liste.get(i).getId(), liste.get(i).getTitle(),
 					liste.get(i).getDescription(), liste.get(i).getGoal(),liste.get(i).getPublishDate(),
 					liste.get(i).getUrgency(), liste.get(i).getFinishingDate(),
-					liste.get(i).getImagePath(), liste.get(i).getState(),liste.get(i).getCamp().getId(),liste.get(i).getCamp().getName()));
+					liste.get(i).getImagePath(), liste.get(i).getState(),c,u));
 		}
 		
 		return listeDto;
 	}
 
 	@Override
-	public List<FundraisingEventDto> listEventsByUserDto(Long idUser) {
-		List<FundraisingEvent> liste= listEventsByUser(idUser);
+	public List<FundraisingEventDto> listEventsByUserDto(User user) {
+		List<FundraisingEvent> liste= listEventsByUser(user);
 		List<FundraisingEventDto> l=new ArrayList<FundraisingEventDto>();
 		for(FundraisingEvent f:liste){
+			UserDto u=new UserDto(f.getPublisher().getId(),f.getPublisher().getLogin());
+			CampDto c=new CampDto(f.getCamp().getId(),f.getCamp().getAddress());
 			l.add(new FundraisingEventDto(f.getId(),f.getTitle(),
 					f.getDescription(),f.getGoal(),f.getPublishDate(),
 					f.getUrgency(),f.getFinishingDate(),
-					f.getImagePath(),f.getState(),f.getCamp().getId(),f.getCamp().getName()));
+					f.getImagePath(),f.getState(),c,u));
 		}
 		return l;
 	}

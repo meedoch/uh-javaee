@@ -5,5 +5,5 @@ import javax.ejb.Local;
 import tn.undefined.universalhaven.entity.User; 
 @Local 
 public interface MailServiceLocal {
-	public List<User> getSubscribedUsers();
+	public String getSubscribedUsers();
 }
