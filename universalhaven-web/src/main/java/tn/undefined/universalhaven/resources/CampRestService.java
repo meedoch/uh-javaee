@@ -1,12 +1,9 @@
 package tn.undefined.universalhaven.resources; 
  
-import java.util.ArrayList; 
-import java.util.List;
-import java.util.Properties;
-
 import javax.ejb.EJB; 
 import javax.faces.bean.RequestScoped; 
-import javax.ws.rs.Consumes; 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET; 
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -32,6 +29,35 @@ public class CampRestService {
   CampServiceLocal serviceCamp; 
    
    
+/*  @GET 
+  @Produces(MediaType.APPLICATION_JSON) 
+  public List<Camp> getall(){ 
+    List<Camp> camps = new ArrayList<>(); 
+    camps.addAll(serviceCamp.ListCamp());
+    return camps; 
+  } */
+  
+  
+/*  @GET 
+  @Produces(MediaType.APPLICATION_JSON) 
+  public Map<String,List<Camp>> getallpercountry(){ 
+	  Map<String,List<Camp>>  camps ;
+	  camps = (serviceCamp.ListCampPerCountry());
+	  if(camps.isEmpty()==false){
+		  System.out.println("is empty");
+	  } 
+    return camps; 
+  } */
+/*  @GET 
+  @Produces(MediaType.APPLICATION_JSON) 
+  public  Map<String, Long>  countAllCampsPerCountry(){ 
+	  Map<String, Long>   camps ;
+	  camps = (serviceCamp.CountCampPerCountry());
+	  if(camps.isEmpty()==false){
+		  System.out.println("is empty");
+	  } 
+    return camps; 
+  } */
   @GET 
   @Produces(MediaType.APPLICATION_JSON) 
   public List<Camp> getall(){ 
@@ -39,7 +65,6 @@ public class CampRestService {
     camps.add(new Camp()); 
     return camps; 
   } 
-   
   @POST 
   @Consumes (MediaType.APPLICATION_JSON) 
   public Response create(Camp camp){ 
@@ -52,12 +77,23 @@ public class CampRestService {
     } 
      
   } 
-  @PUT
-  @Path("{id}")
-  @Consumes (MediaType.APPLICATION_JSON)
-	public Response modifierEmploye(Camp camp)
+/*  	@PUT
+   @Consumes (MediaType.APPLICATION_FORM_URLENCODED)
+	public Response disbandCamps(@FormParam(value= "id")long campId)
 	{
-	  if (serviceCamp.disbandCamp(camp)){ 
+	  if (serviceCamp.disbandCamp(campId)){ 
+	      return Response.ok().entity("Camp modified").build(); 
+	    } 
+	    else{ 
+	      return Response.status(Status.NOT_ACCEPTABLE).entity("Camp no").build(); 
+	    } 
+   
+}*/
+  	@PUT
+   @Consumes (MediaType.APPLICATION_FORM_URLENCODED)
+	public Response UpdateCamps(@FormParam(value= "id")long campId,@FormParam(value= "name")String name)
+	{
+	  if (serviceCamp.updateCamp(campId, name)){ 
 	      return Response.ok().entity("Camp modified").build(); 
 	    } 
 	    else{ 
@@ -65,7 +101,6 @@ public class CampRestService {
 	    } 
    
 }
- 
 
 
 }
