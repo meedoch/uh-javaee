@@ -74,11 +74,9 @@ public Map<String, Long> CountCampPerCountry() {
 	return maaap;
 }
 @Override
-public boolean updateCamp(long id,String name) {
+public boolean updateCamp(Camp camps) {
 	  try { 
-		  Camp camp = em.find(Camp.class, id);
-		  camp.setName(name);
-			em.merge(camp);
+			em.merge(camps);
 			return true; 
 	    } 
 	    catch (Exception e) { 

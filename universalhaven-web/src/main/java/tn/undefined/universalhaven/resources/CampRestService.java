@@ -29,16 +29,18 @@ public class CampRestService {
   CampServiceLocal serviceCamp; 
    
    
-/*  @GET 
+  @GET 
+  @Path("/findallcamps")
   @Produces(MediaType.APPLICATION_JSON) 
-  public List<Camp> getall(){ 
+  public List<Camp> getallcamps(){ 
     List<Camp> camps = new ArrayList<>(); 
     camps.addAll(serviceCamp.ListCamp());
     return camps; 
-  } */
+  } 
   
   
-/*  @GET 
+  @GET 
+  @Path("/findbycountry")
   @Produces(MediaType.APPLICATION_JSON) 
   public Map<String,List<Camp>> getallpercountry(){ 
 	  Map<String,List<Camp>>  camps ;
@@ -47,8 +49,9 @@ public class CampRestService {
 		  System.out.println("is empty");
 	  } 
     return camps; 
-  } */
-/*  @GET 
+  } 
+  @GET 
+  @Path("/countcamps")
   @Produces(MediaType.APPLICATION_JSON) 
   public  Map<String, Long>  countAllCampsPerCountry(){ 
 	  Map<String, Long>   camps ;
@@ -57,7 +60,7 @@ public class CampRestService {
 		  System.out.println("is empty");
 	  } 
     return camps; 
-  } */
+  } 
   @GET 
   @Produces(MediaType.APPLICATION_JSON) 
   public List<Camp> getall(){ 
@@ -66,6 +69,7 @@ public class CampRestService {
     return camps; 
   } 
   @POST 
+  @Path("/create")
   @Consumes (MediaType.APPLICATION_JSON) 
   public Response create(Camp camp){ 
      
@@ -77,7 +81,8 @@ public class CampRestService {
     } 
      
   } 
-/*  	@PUT
+  	@PUT
+  	@Path("/disbandcamps")
    @Consumes (MediaType.APPLICATION_FORM_URLENCODED)
 	public Response disbandCamps(@FormParam(value= "id")long campId)
 	{
@@ -88,17 +93,18 @@ public class CampRestService {
 	      return Response.status(Status.NOT_ACCEPTABLE).entity("Camp no").build(); 
 	    } 
    
-}*/
+}
   	@PUT
    @Consumes (MediaType.APPLICATION_FORM_URLENCODED)
-	public Response UpdateCamps(@FormParam(value= "id")long campId,@FormParam(value= "name")String name)
+  	@Path("/updatecamp")
+	public Response UpdateCamps(Camp camp)
 	{
-	  if (serviceCamp.updateCamp(campId, name)){ 
-	      return Response.ok().entity("Camp modified").build(); 
-	    } 
-	    else{ 
-	      return Response.status(Status.NOT_ACCEPTABLE).entity("Camp no").build(); 
-	    } 
+  		if (serviceCamp.updateCamp(camp)){ 
+  	      return Response.ok().entity("Camp added").build(); 
+  	    } 
+  	    else{ 
+  	      return Response.status(Status.NOT_ACCEPTABLE).entity("Camp Not added").build(); 
+  	    } 
    
 }
 

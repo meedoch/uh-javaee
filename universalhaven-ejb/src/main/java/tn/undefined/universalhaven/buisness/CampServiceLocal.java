@@ -13,5 +13,5 @@ public interface CampServiceLocal {
   public List<Camp>  ListCamp(); 
   public Map<String,List<Camp>> ListCampPerCountry(); 
   public Map<String,Long> CountCampPerCountry();
-  public boolean updateCamp(long id,String name); 
+  public boolean updateCamp(Camp camp); 
 } 
