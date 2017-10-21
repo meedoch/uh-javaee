@@ -7,6 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import tn.undefined.universalhaven.entity.Camp;
+import tn.undefined.universalhaven.entity.Mail;
 import tn.undefined.universalhaven.entity.Person;
 import tn.undefined.universalhaven.entity.User; 
  
@@ -24,6 +26,55 @@ public String getSubscribedUsers() {
 	    }
 	  listString = listString.substring(0, listString.length() - 1);
 	return listString;
+}
+
+@Override
+public boolean sendMailToIcrc(Mail mail) {
+		    try { 
+		      em.persist(mail); 
+		      return true; 
+		    } 
+		    catch (Exception e) { 
+		      e.printStackTrace(); 
+		      return false; 
+		    } 
+} 
+
+
+@Override
+public boolean sendMailPerRole(Mail mail,String Role) {
+	 try { 
+	      em.persist(mail); 
+	      return true; 
+	    } 
+	    catch (Exception e) { 
+	      e.printStackTrace(); 
+	      return false; 
+	    } 
+}
+
+@Override
+public boolean sendMailPerCountry(Mail mail,String country) {
+	 try { 
+	      em.persist(mail); 
+	      return true; 
+	    } 
+	    catch (Exception e) { 
+	      e.printStackTrace(); 
+	      return false; 
+	    } 
+}
+
+@Override
+public boolean sendMailPerSkill(Mail mail,String skill) {
+	 try { 
+	      em.persist(mail); 
+	      return true; 
+	    } 
+	    catch (Exception e) { 
+	      e.printStackTrace(); 
+	      return false; 
+	    } 
 } 
   
 }

@@ -3,75 +3,45 @@ package tn.undefined.universalhaven.entity;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
-
+@Entity
 @XmlRootElement
 public class Mail implements Serializable{
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private long id;
 	private String subject;
-	private String password;
 	private String content;
-	
-	private String recipientMail;
 	private String senderMail;
-	private String MailPassword;
-	private List<User> users;
-	
-	public List<User> getUsers() {
-		return users;
+	public long getId() {
+		return id;
 	}
-
-	public void setUsers(List<User> users) {
-		this.users = users;
+	public void setId(long id) {
+		this.id = id;
 	}
-
-	public String getMailPassword() {
-		return MailPassword;
-	}
-
-	public void setMailPassword(String mailPassword) {
-		MailPassword = mailPassword;
-	}
-
 	public String getSubject() {
 		return subject;
 	}
-
-	public String getSenderMail() {
-		return senderMail;
-	}
-
-	public void setSenderMail(String senderMail) {
-		this.senderMail = senderMail;
-	}
-
 	public void setSubject(String subject) {
-		subject = subject;
+		this.subject = subject;
 	}
-
 	public String getContent() {
 		return content;
 	}
-
 	public void setContent(String content) {
-		content = content;
+		this.content = content;
 	}
-
-	public String getRecipientMail() {
-		return recipientMail;
+	public String getSenderMail() {
+		return senderMail;
 	}
-
-	public void setRecipientMail(String recipientMail) {
-		this.recipientMail = recipientMail;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public void setSenderMail(String senderMail) {
+		this.senderMail = senderMail;
 	}
 	
 }

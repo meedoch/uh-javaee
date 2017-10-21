@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.PathParam;
 import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.Mail;
+import tn.undefined.universalhaven.enumerations.UserRole;
+import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 import tn.undefined.universalhaven.buisness.CampServiceLocal; 
 import java.util.*;
 import javax.mail.*;
@@ -32,16 +34,22 @@ public class CampRestService {
   @GET 
   @Path("/findallcamps")
   @Produces(MediaType.APPLICATION_JSON) 
-  public List<Camp> getallcamps(){ 
+  @JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
+  public Response getallcamps(){ 
     List<Camp> camps = new ArrayList<>(); 
+    
     camps.addAll(serviceCamp.ListCamp());
-    return camps; 
+    if (camps.isEmpty()){
+    	return Response.status(Status.NO_CONTENT).build();
+    }
+    return Response.ok(camps).build();
   } 
   
   
   @GET 
   @Path("/findbycountry")
   @Produces(MediaType.APPLICATION_JSON) 
+  @JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
   public Map<String,List<Camp>> getallpercountry(){ 
 	  Map<String,List<Camp>>  camps ;
 	  camps = (serviceCamp.ListCampPerCountry());
@@ -53,6 +61,7 @@ public class CampRestService {
   @GET 
   @Path("/countcamps")
   @Produces(MediaType.APPLICATION_JSON) 
+  @JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
   public  Map<String, Long>  countAllCampsPerCountry(){ 
 	  Map<String, Long>   camps ;
 	  camps = (serviceCamp.CountCampPerCountry());
@@ -69,12 +78,12 @@ public class CampRestService {
     return camps; 
   } 
   @POST 
-  @Path("/create")
   @Consumes (MediaType.APPLICATION_JSON) 
+  @JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
   public Response create(Camp camp){ 
      
     if (serviceCamp.CreateCamp(camp)){ 
-      return Response.ok().entity("Camp added").build(); 
+      return Response.status(Status.CREATED).entity("Camp added").build(); 
     } 
     else{ 
       return Response.status(Status.NOT_ACCEPTABLE).entity("Camp Not added").build(); 
@@ -84,26 +93,27 @@ public class CampRestService {
   	@PUT
   	@Path("/disbandcamps")
    @Consumes (MediaType.APPLICATION_FORM_URLENCODED)
+  	@JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
 	public Response disbandCamps(@FormParam(value= "id")long campId)
 	{
 	  if (serviceCamp.disbandCamp(campId)){ 
 	      return Response.ok().entity("Camp modified").build(); 
 	    } 
 	    else{ 
-	      return Response.status(Status.NOT_ACCEPTABLE).entity("Camp no").build(); 
+	      return Response.status(Status.NOT_MODIFIED).entity("Camp no").build(); 
 	    } 
    
 }
   	@PUT
-   @Consumes (MediaType.APPLICATION_FORM_URLENCODED)
-  	@Path("/updatecamp")
+   @Consumes (MediaType.APPLICATION_JSON)
+  	
 	public Response UpdateCamps(Camp camp)
 	{
   		if (serviceCamp.updateCamp(camp)){ 
-  	      return Response.ok().entity("Camp added").build(); 
+  	      return Response.ok().entity("Camp edited").build(); 
   	    } 
   	    else{ 
-  	      return Response.status(Status.NOT_ACCEPTABLE).entity("Camp Not added").build(); 
+  	      return Response.status(Status.NOT_MODIFIED).entity("Camp Not edited").build(); 
   	    } 
    
 }

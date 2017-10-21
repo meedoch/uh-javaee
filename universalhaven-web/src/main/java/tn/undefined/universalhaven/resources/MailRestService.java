@@ -24,6 +24,8 @@ import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.Mail;
 import tn.undefined.universalhaven.entity.Person;
 import tn.undefined.universalhaven.entity.User;
+import tn.undefined.universalhaven.enumerations.UserRole;
+import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 import tn.undefined.universalhaven.buisness.CampServiceLocal;
 import tn.undefined.universalhaven.buisness.MailServiceLocal;
 @Path("mail") 
@@ -31,7 +33,8 @@ import tn.undefined.universalhaven.buisness.MailServiceLocal;
 public class MailRestService {
 	@EJB 
 	  MailServiceLocal serviceMail; 
-	 @POST 
+	
+/*	 @POST 
 	  @Path("/send")
 	  @Consumes (MediaType.APPLICATION_JSON) 
 	  @Produces(MediaType.APPLICATION_JSON) 
@@ -74,14 +77,27 @@ public class MailRestService {
 	          System.out.println(ex);
 	          return Response.status(Status.NOT_ACCEPTABLE).entity("problem of sending the message").build();
 	      }
-		
-		  
-		 
+	  } */
+	  @POST 
+	  @Path("/send")
+	  @Consumes (MediaType.APPLICATION_JSON)
+	  
+	  public Response SendMail(Mail mail){ 
+	    if (serviceMail.sendMailToIcrc(mail)){ 
+	    	System.out.println(mail.getSubject()+mail.getSenderMail()+mail.getContent()+mail.getId());
+	      return Response.status(Status.CREATED).entity("Mail sendet").build(); 
+	    } 
+	    else{ 
+	      return Response.status(Status.NOT_ACCEPTABLE).entity("Mail Not sendet").build(); 
+	    } 
 	     
 	  } 
+	
+	
 	  @POST 
 	  @Path("/newsletter")
 	  @Consumes (MediaType.APPLICATION_JSON) 
+	  @JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
 	  public Response SendNewsLetter(Mail mail){ 
 		  //String to ="";
 		  //users += serviceMail.getSubscribedUsers();
