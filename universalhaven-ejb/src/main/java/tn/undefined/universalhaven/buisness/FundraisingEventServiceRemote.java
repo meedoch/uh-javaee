@@ -1,4 +1,4 @@
-package tn.undefined.universalhaven.service;
+package tn.undefined.universalhaven.buisness;
 
 import java.util.Collection;
 import java.util.List;

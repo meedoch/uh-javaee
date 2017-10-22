@@ -1,10 +1,8 @@
-package tn.undefined.universalhaven.rest;
+package tn.undefined.universalhaven.resources;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
@@ -12,9 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -25,14 +21,15 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import tn.undefined.universalhaven.service.FundraisingEventServiceLocal;
+import tn.undefined.universalhaven.buisness.FundraisingEventServiceLocal;
 import tn.undefined.universalhaven.dto.FundraisingEventDto;
-import tn.undefined.universalhaven.entity.*;
+import tn.undefined.universalhaven.entity.FundraisingEvent;
+import tn.undefined.universalhaven.entity.User;
 import tn.undefined.universalhaven.enumerations.UserRole;
 import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 /*http://localhost:18080/universalhaven-web/rest/fundraisingEvent/*/
 @Path("fundraisingEvent")
-public class FundraisingEventRestService {
+public class FundraisingEventResource {
 	
 	@EJB
 	FundraisingEventServiceLocal fundraisingEventService;

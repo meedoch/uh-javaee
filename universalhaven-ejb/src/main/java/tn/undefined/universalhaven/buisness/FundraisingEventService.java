@@ -1,35 +1,29 @@
-package tn.undefined.universalhaven.service;
+package tn.undefined.universalhaven.buisness;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.persistence.Query;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import tn.undefined.universalhaven.entity.User;
 import tn.undefined.universalhaven.dto.CampDto;
 import tn.undefined.universalhaven.dto.FundraisingEventDto;
 import tn.undefined.universalhaven.dto.UserDto;
-import tn.undefined.universalhaven.entity.Camp;
-import tn.undefined.universalhaven.entity.Donation;
 import tn.undefined.universalhaven.entity.FundraisingEvent;
-import tn.undefined.universalhaven.entity.Person;
+import tn.undefined.universalhaven.entity.User;
 @Stateless
 public class FundraisingEventService implements FundraisingEventServiceLocal,FundraisingEventServiceRemote {
 
 	@PersistenceContext
 	private EntityManager em;
-	@Override
 	public Map<String, Double> getAverageCompletionDate() {
-		Query query = em.createQuery("SELECT c.address,AVG(DATEDIFF(f.finishingDate,f.publishDate)) from FundraisingEvent f join f.camp c" + " where f.state='Finished' GROUP BY c.address ");
+		Query query = em.createQuery("SELECT c.country,AVG(DATEDIFF(f.finishingDate,f.publishDate)) from FundraisingEvent f join f.camp c" + " where f.state='Finished' GROUP BY c.country ");
 		List<Object[]> results = query.getResultList();
 		Map<String, Double> resultMap = new HashMap<>();
 		for (Object[] result : results) {
@@ -44,7 +38,7 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 	public Map<String, Long> getEventCountByCountry() {
 		// TODO Auto-generated method stub
 //		Query query = em.createQuery("SELECT f.camp.address,Count(f.id) from FundraisingEvent f" + " GROUP BY f.camp.adrress");
-		Query query = em.createQuery("SELECT c.address,count(c.id) from FundraisingEvent f join f.camp c" + " GROUP BY c.address ");
+		Query query = em.createQuery("SELECT c.country,count(c.id) from FundraisingEvent f join f.camp c" + " GROUP BY c.country ");
 		List<Object[]> results = query.getResultList();
 		Map<String,Long> resultMap = new HashMap<>();
 		for (Object[] result : results) {
@@ -131,7 +125,7 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 		for(int i = 0 ; i< liste.size() ; i++){
 			System.out.println(liste.get(i).getId());
 			UserDto u=new UserDto(liste.get(i).getPublisher().getId(),liste.get(i).getPublisher().getLogin());
-			CampDto c=new CampDto(liste.get(i).getCamp().getId(), liste.get(i).getCamp().getAddress());
+			CampDto c=new CampDto(liste.get(i).getCamp().getId(), liste.get(i).getCamp().getAddress(),liste.get(i).getCamp().getCountry());
 			listeDto.add(new FundraisingEventDto(liste.get(i).getId(), liste.get(i).getTitle(),
 					liste.get(i).getDescription(), liste.get(i).getGoal(),liste.get(i).getPublishDate(),
 					liste.get(i).getUrgency(), liste.get(i).getFinishingDate(),
