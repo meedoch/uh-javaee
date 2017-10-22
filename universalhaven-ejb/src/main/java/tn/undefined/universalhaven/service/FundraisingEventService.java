@@ -89,14 +89,8 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 	}
 
 	@Override
-	public void startEvent(FundraisingEvent event/*,long idCamp,long idUser*/){
-		/*event=em.find(FundraisingEvent.class, event.getId());
-		Camp c=new Camp();
-		c=em.find(Camp.class, idCamp);
-		User u = new User();
-		u=em.find(User.class, idUser);
-		//event.setPublisher(u);
-		event.setCamp(c);*/
+	public void startEvent(FundraisingEvent event){
+		event.setState("In progress");
 		em.persist(event);
 	}
 
@@ -107,9 +101,26 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 	}
 
 	@Override
-	public void disableEvent(FundraisingEvent event) {
-		// TODO Auto-generated method stub
-		
+	public void changeEventState(FundraisingEvent event) {
+		TypedQuery<Double> query=em.createQuery("select sum(d.amount) from Donation d  where d.fundraisingEvent=:event",Double.class);
+		query.setParameter("event", event);
+		double sumAmount=query.getSingleResult();
+		TypedQuery<Double> query2=em.createQuery("select goal from FundraisingEvent f  where f.id=:idEvent",Double.class);
+		query2.setParameter("idEvent", event.getId());
+		double goal=query2.getSingleResult();
+		System.out.println("sum amount: "+sumAmount);
+		System.out.println("goal: "+goal);
+		if(goal<=sumAmount){
+			System.out.println("wselna lil goal");
+			 /*Query q=em.createQuery("UPDATE FundraisingEvent f set f.state=Finished where f.id=:idEvent ");
+			 q.setParameter("idEvent",event.getId());*/
+			Query q = em
+					.createQuery("UPDATE FundraisingEvent f set f.state= 'Finished',f.finishingDate=?1 "
+					+ "WHERE f.id=:idEvent").setParameter(1,new Date());
+					q.setParameter("idEvent", event.getId());
+					int updateCount = q.executeUpdate();
+		}
+		else System.out.println("mezelna mawselnech lil goal");		
 	}
 
 	@Override
@@ -143,6 +154,16 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 					f.getImagePath(),f.getState(),c,u));
 		}
 		return l;
+	}
+
+	@Override
+	public double getSumAmountByEvent(FundraisingEvent event) {
+		// TODO Auto-generated method stub
+		TypedQuery<Double> query=em.createQuery("select sum(d.amount) from Donation d  where d.fundraisingEvent=:event",Double.class);
+		query.setParameter("event", event);
+		double result=query.getSingleResult();
+		System.out.println("somme: "+result);
+		return result;
 	}
 
 }

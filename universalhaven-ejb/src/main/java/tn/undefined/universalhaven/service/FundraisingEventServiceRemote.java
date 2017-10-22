@@ -17,8 +17,9 @@ public interface FundraisingEventServiceRemote {
 	public List<FundraisingEvent> listEventsByUser(User user);
 	public void startEvent(FundraisingEvent event/*,long idCamp,long idUser*/);
 	public void updateEvent(FundraisingEvent event);
-	public void disableEvent(FundraisingEvent event);
+	public void changeEventState(FundraisingEvent event);
 	public List<FundraisingEventDto> listActiveEventsDto();
 	public List<FundraisingEventDto> listEventsByUserDto(User user);
+	public double getSumAmountByEvent(FundraisingEvent event);
 
 }
