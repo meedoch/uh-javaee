@@ -3,6 +3,7 @@ package tn.undefined.universalhaven.entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @XmlRootElement
@@ -61,8 +64,9 @@ public class Camp implements Serializable{
 	@OneToMany(mappedBy="camp")
 	private List<Refugee> refugees;
 	@XmlTransient
-	@OneToMany(mappedBy="camp")
-	private List<Resource> resources;
+	@OneToMany(mappedBy = "camp", fetch = FetchType.EAGER)
+	@JsonManagedReference("resources-camp")
+	private Set<Resource> resources;
 	
 	@OneToOne
 	private User campManager;
@@ -73,8 +77,9 @@ public class Camp implements Serializable{
 	@OneToMany(mappedBy="assignedCamp")
 	private List<User> campStaff;
 	@XmlTransient
-	@OneToMany(mappedBy="camp")
-	private List<CallForHelp> callForHelpEvents;
+	@OneToMany(mappedBy = "camp", fetch = FetchType.EAGER)
+	@JsonManagedReference("callforhelp-camp")
+	private Set<CallForHelp> callForHelpEvents;
 	@XmlTransient
 	@OneToMany(mappedBy="camp")
 	private List<Task> campTasks;
@@ -184,10 +189,10 @@ public class Camp implements Serializable{
 		this.refugees = refugees;
 	}
 	@XmlTransient
-	public List<Resource> getResources() {
+	public Set<Resource> getResources() {
 		return resources;
 	}
-	public void setResources(List<Resource> resources) {
+	public void setResources(Set<Resource> resources) {
 		this.resources = resources;
 	}
 	public User getCampManager() {
@@ -210,10 +215,10 @@ public class Camp implements Serializable{
 		this.campStaff = campStaff;
 	}
 	@XmlTransient
-	public List<CallForHelp> getCallForHelpEvents() {
+	public Set<CallForHelp> getCallForHelpEvents() {
 		return callForHelpEvents;
 	}
-	public void setCallForHelpEvents(List<CallForHelp> callForHelpEvents) {
+	public void setCallForHelpEvents(Set<CallForHelp> callForHelpEvents) {
 		this.callForHelpEvents = callForHelpEvents;
 	}
 	@XmlTransient
