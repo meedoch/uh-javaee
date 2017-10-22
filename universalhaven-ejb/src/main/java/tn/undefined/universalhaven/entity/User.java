@@ -124,7 +124,7 @@ public class User extends Person{
 		this.motivation = motivation;
 	}
 	
-	
+	@Enumerated(EnumType.STRING)
 	public UserRole getRole() {
 		return role;
 	}
