@@ -8,7 +8,6 @@ import tn.undefined.universalhaven.entity.Mail;
 import tn.undefined.universalhaven.entity.User;
 import tn.undefined.universalhaven.enumerations.UserRole;
 
- 
 @Stateless 
 public class MailService implements MailServiceLocal,MailServiceRemote{ 
   @PersistenceContext 

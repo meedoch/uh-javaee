@@ -4,15 +4,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ejb.Stateless; 
 import javax.persistence.EntityManager; 
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
-import tn.undefined.universalhaven.entity.Camp;
-import tn.undefined.universalhaven.entity.Mail; 
+import tn.undefined.universalhaven.entity.Camp; 
  
 @Stateless 
 public class CampService implements CampServiceLocal,CampServiceRemote{ 
@@ -76,6 +73,7 @@ public Map<String, Long> CountCampPerCountry() {
 @Override
 public boolean updateCamp(Camp camp) {
 	  try { 
+		 
 			em.merge(camp);
 			return true; 
 	    } 
