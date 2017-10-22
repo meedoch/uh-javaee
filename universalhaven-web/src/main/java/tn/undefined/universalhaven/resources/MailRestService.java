@@ -99,7 +99,7 @@ public class MailRestService {
 			  String skill= param.getSkill();
 	          String host ="smtp.gmail.com" ;
 	          String user = "he.flach.smok.c4@gmail.com";
-	          String pass = "momo220584";
+	          String pass = "mo********";
 	          String to = serviceMail.sendMailPerSomthing(role,country,skill);  
 	          String from = "universalhaven@noreply.com";
 	          String subject = mail.getSubject();

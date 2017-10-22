@@ -39,7 +39,7 @@ public boolean contacterNous(Mail mail) {
 public String sendMailPerSomthing(UserRole role, String country, String skill) {
 	User user = new User();
 	user.setRole(role);
-	String roles =  Integer.toString(user.getRole().ordinal()) ;
+	String roles =  user.getRole().toString() ;
 	System.out.println(roles);
 	TypedQuery<String> query= null;
 	String listString = "";
