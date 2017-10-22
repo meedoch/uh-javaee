@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 import tn.undefined.universalhaven.entity.Mail;
 import tn.undefined.universalhaven.enumerations.UserRole;
 import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
+import tn.undefined.universalhaven.util.MailParam;
 import tn.undefined.universalhaven.buisness.MailServiceLocal;
 @Path("mail") 
 @RequestScoped 
@@ -88,17 +89,21 @@ public class MailRestService {
 	
 	  @POST 
 	  @Path("/sendmail")
-	  @Consumes (MediaType.APPLICATION_FORM_URLENCODED) 
+	  @Consumes (MediaType.APPLICATION_JSON) 
 	  //@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
-	  public Response sendMailPer(@FormParam(value= "role")UserRole role,@FormParam(value= "country")String country, @FormParam(value= "skill")String skill ){ 
+	  public Response sendMailPer(MailParam param ){ 
 		  try{
+			  Mail mail = param.getMail();
+			  UserRole role = param.getRole();
+			  String country= param.getCountry();
+			  String skill= param.getSkill();
 	          String host ="smtp.gmail.com" ;
 	          String user = "he.flach.smok.c4@gmail.com";
-	          String pass = "mo********";
+	          String pass = "momo220584";
 	          String to = serviceMail.sendMailPerSomthing(role,country,skill);  
 	          String from = "universalhaven@noreply.com";
-	          String subject = "mmmmm";
-	          String messageText = "ezezez";
+	          String subject = mail.getSubject();
+	          String messageText = mail.getContent();
 	          boolean sessionDebug = false;
 	          String[] recipientList = to.split(",");
 	          Properties props = System.getProperties();

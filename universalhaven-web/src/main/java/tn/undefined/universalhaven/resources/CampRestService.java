@@ -79,7 +79,7 @@ public class CampRestService {
   } 
   @POST 
   @Consumes (MediaType.APPLICATION_JSON) 
-  @JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
+  //@JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
   public Response create(Camp camp){ 
      
     if (serviceCamp.CreateCamp(camp)){ 
