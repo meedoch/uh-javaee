@@ -2,12 +2,17 @@ package tn.undefined.universalhaven.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
@@ -30,15 +35,17 @@ public class ApplicationForm implements Serializable {
 	
 	private String phoneNumber;
 	
-	private String attachment;
+@OneToMany(mappedBy="applicationFrom",fetch=FetchType.EAGER)
+	
+	private List<Attachment> attachments;
 	
 	private String godFatherEmail;
 	
-	private boolean accepted= false;
-	
+	private Boolean accepted= false;
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date submissionDate = new Date();
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	private User reviewer;
 	
 	
@@ -91,12 +98,7 @@ public class ApplicationForm implements Serializable {
 		this.phoneNumber = phoneNumber;
 	}
 	
-	public String getAttachment() {
-		return attachment;
-	}
-	public void setAttachment(String attachment) {
-		this.attachment = attachment;
-	}
+	
 	
 	public String getGodFatherEmail() {
 		return godFatherEmail;
@@ -124,6 +126,12 @@ public class ApplicationForm implements Serializable {
 	}
 	public void setReviewer(User reviewer) {
 		this.reviewer = reviewer;
+	}
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 	
 	

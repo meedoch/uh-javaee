@@ -47,10 +47,19 @@ public class FundraisingEventResource {
 	@Path("stat")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCountEventPerCamp(){
+	public Response getCountEventPerCountry(){
 		if(fundraisingEventService.getEventCountByCountry()==null)
 			return null;
 		return Response.status(Status.OK).entity(fundraisingEventService.getEventCountByCountry()).build();
+		
+	}
+	@Path("eventCountByMonth")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCountEventPerMonth(){
+		if(fundraisingEventService.getCountEventByMonth()==null)
+			return null;
+		return Response.status(Status.OK).entity(fundraisingEventService.getCountEventByMonth()).build();
 		
 	}
 	/*@Path("user/{id}")
@@ -74,8 +83,10 @@ public class FundraisingEventResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addEvent(FundraisingEvent event) {
-		fundraisingEventService.startEvent(event);
-		return Response.status(Status.CREATED).encoding("ok").build();
+		if(fundraisingEventService.startEvent(event)==true){
+			return Response.status(Status.CREATED).entity("event added succesfully").build();
+		}
+		return Response.status(Status.NOT_ACCEPTABLE).entity("event added failed").build();
 		
 	}
 	//http://localhost:18080/universalhaven-web/rest/fundraisingEvent/avgCompletionEvent
@@ -92,8 +103,10 @@ public class FundraisingEventResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
 	public Response updateEvent(FundraisingEvent event) {
-		fundraisingEventService.updateEvent(event);
-		return Response.status(Status.ACCEPTED).encoding("ok").build();
+		if(fundraisingEventService.updateEvent(event)){
+			return Response.status(Status.ACCEPTED).encoding("event updated succesfully").build();
+		}
+		return Response.status(Status.NOT_ACCEPTABLE).entity("event updated failed").build();
 		
 	}
 	public void genererExcel() throws IOException,WriteException{
