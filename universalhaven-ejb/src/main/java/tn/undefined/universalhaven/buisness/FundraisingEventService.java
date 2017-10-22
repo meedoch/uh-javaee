@@ -1,33 +1,27 @@
-package tn.undefined.universalhaven.service;
+package tn.undefined.universalhaven.buisness;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.persistence.Query;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import tn.undefined.universalhaven.entity.User;
 import tn.undefined.universalhaven.dto.CampDto;
 import tn.undefined.universalhaven.dto.FundraisingEventDto;
 import tn.undefined.universalhaven.dto.UserDto;
-import tn.undefined.universalhaven.entity.Camp;
-import tn.undefined.universalhaven.entity.Donation;
 import tn.undefined.universalhaven.entity.FundraisingEvent;
-import tn.undefined.universalhaven.entity.Person;
+import tn.undefined.universalhaven.entity.User;
 @Stateless
 public class FundraisingEventService implements FundraisingEventServiceLocal,FundraisingEventServiceRemote {
 
 	@PersistenceContext
 	private EntityManager em;
-	@Override
 	public Map<String, Double> getAverageCompletionDate() {
 		Query query = em.createQuery("SELECT c.address,AVG(DATEDIFF(f.finishingDate,f.publishDate)) from FundraisingEvent f join f.camp c" + " where f.state='Finished' GROUP BY c.address ");
 		List<Object[]> results = query.getResultList();

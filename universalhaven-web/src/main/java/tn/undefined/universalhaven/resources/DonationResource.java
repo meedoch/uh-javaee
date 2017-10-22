@@ -11,11 +11,11 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import tn.undefined.universalhaven.buisness.DonationServiceLocal;
+import tn.undefined.universalhaven.buisness.FundraisingEventServiceLocal;
 import tn.undefined.universalhaven.buisness.PaypalServiceRemote;
 import tn.undefined.universalhaven.buisness.StripeServiceRemote;
 import tn.undefined.universalhaven.entity.Donation;
@@ -35,6 +35,8 @@ public class DonationResource {
 
 	@EJB
 	DonationServiceLocal serviceDonation;
+	@EJB
+	FundraisingEventServiceLocal fundraisingEventService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -55,6 +57,8 @@ public class DonationResource {
 				param.getDonation().setPaymentMethod("paypal");
 				param.getDonation().setTransactionReference(reference);
 				serviceDonation.add(param.getDonation());
+				if (param.getDonation().getFundraisingEvent()!=null)
+					fundraisingEventService.changeEventState(param.getDonation().getFundraisingEvent());
 				return ResponseUtil.buildOk("Paypal payment successful and donation persisted");
 
 			} else {
@@ -68,6 +72,8 @@ public class DonationResource {
 				param.getDonation().setPaymentMethod("stripe");
 				param.getDonation().setTransactionReference(reference);
 				serviceDonation.add(param.getDonation());
+				if (param.getDonation().getFundraisingEvent()!=null)
+					fundraisingEventService.changeEventState(param.getDonation().getFundraisingEvent());
 				return ResponseUtil.buildOk("Stripe payment successful and donation persisted");
 			}
 			return ResponseUtil.buildError("Stripe payment failed");
