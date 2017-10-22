@@ -1,16 +1,13 @@
 package tn.undefined.universalhaven.buisness;
-import java.util.List;
 
 import javax.ejb.Remote;
 
 import tn.undefined.universalhaven.entity.Mail;
-import tn.undefined.universalhaven.entity.Person;
-import tn.undefined.universalhaven.entity.User; 
+import tn.undefined.universalhaven.enumerations.UserRole;
 @Remote 
 public interface MailServiceRemote {
 	public String getSubscribedUsers();
-	public boolean sendMailToIcrc(Mail mail);
-	public boolean sendMailPerRole(Mail mail,String role);
-	public boolean sendMailPerCountry(Mail mail,String country);
-	public boolean sendMailPerSkill(Mail mail,String skill);
+	public boolean contacterNous(Mail mail);
+	public boolean deleteMail(Mail mail);
+	public String sendMailPerSomthing(UserRole role, String country, String skill);
 }
