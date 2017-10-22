@@ -53,11 +53,7 @@ public class JWTTokenIssuer {
 	        }
 	    }
 	    
-	    private void authenticate(String login, String password) throws Exception {
-	    	if (login.equals("meedoch")==false) {
-	    		throw new Exception();
-	    	}
-	    }
+	   
 	    
 	    private String issueToken(String login,UserRole role) {
 	        Key key = keyGenerator.generateKey();

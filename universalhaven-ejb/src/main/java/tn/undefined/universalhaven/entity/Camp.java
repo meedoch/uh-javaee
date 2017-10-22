@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @XmlRootElement
@@ -41,16 +42,25 @@ public class Camp implements Serializable{
 	
 	private double budget;
 	
+	private String country;
+	
+	
+	public String getCountry() {
+		return country;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
 	private Date creationDate= new Date();
 	
 	private Date closingDate;
-	
+	@XmlTransient
 	@OneToMany(mappedBy="camp")
 	private List<Suggestion> suggestions;
-	
+	@XmlTransient
 	@OneToMany(mappedBy="camp")
 	private List<Refugee> refugees;
-	
+	@XmlTransient
 	@OneToMany(mappedBy="camp")
 	private List<Resource> resources;
 	
@@ -59,15 +69,19 @@ public class Camp implements Serializable{
 	
 	@ManyToOne
 	private User campCreator;
+	@XmlTransient
 	@OneToMany(mappedBy="assignedCamp")
 	private List<User> campStaff;
+	@XmlTransient
 	@OneToMany(mappedBy="camp")
 	private List<CallForHelp> callForHelpEvents;
-	
+	@XmlTransient
 	@OneToMany(mappedBy="camp")
 	private List<Task> campTasks;
+	@XmlTransient
 	@OneToMany(mappedBy="camp", fetch = FetchType.LAZY)
 	private List<FundraisingEvent> fundraisingEvents;
+	@XmlTransient
 	public List<FundraisingEvent> getFundraisingEvents() {
 		return fundraisingEvents;
 	}
@@ -155,18 +169,21 @@ public class Camp implements Serializable{
 	public void setClosingDate(Date closingDate) {
 		this.closingDate = closingDate;
 	}
+	@XmlTransient
 	public List<Suggestion> getSuggestions() {
 		return suggestions;
 	}
 	public void setSuggestions(List<Suggestion> suggestions) {
 		this.suggestions = suggestions;
 	}
+	@XmlTransient
 	public List<Refugee> getRefugees() {
 		return refugees;
 	}
 	public void setRefugees(List<Refugee> refugees) {
 		this.refugees = refugees;
 	}
+	@XmlTransient
 	public List<Resource> getResources() {
 		return resources;
 	}
@@ -185,18 +202,21 @@ public class Camp implements Serializable{
 	public void setCampCreator(User campCreator) {
 		this.campCreator = campCreator;
 	}
+	@XmlTransient
 	public List<User> getCampStaff() {
 		return campStaff;
 	}
 	public void setCampStaff(List<User> campStaff) {
 		this.campStaff = campStaff;
 	}
+	@XmlTransient
 	public List<CallForHelp> getCallForHelpEvents() {
 		return callForHelpEvents;
 	}
 	public void setCallForHelpEvents(List<CallForHelp> callForHelpEvents) {
 		this.callForHelpEvents = callForHelpEvents;
 	}
+	@XmlTransient
 	public List<Task> getCampTasks() {
 		return campTasks;
 	}
