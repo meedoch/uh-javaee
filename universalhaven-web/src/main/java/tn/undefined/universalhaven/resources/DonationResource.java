@@ -1,18 +1,11 @@
-package tn.undefined.universalhaven.rest;
+package tn.undefined.universalhaven.resources;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -22,16 +15,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import jwt.JWTTokenNeeded;
+import tn.undefined.universalhaven.buisness.DonationServiceLocal;
+import tn.undefined.universalhaven.buisness.PaypalServiceRemote;
+import tn.undefined.universalhaven.buisness.StripeServiceRemote;
 import tn.undefined.universalhaven.entity.Donation;
 import tn.undefined.universalhaven.enumerations.UserRole;
-import tn.undefined.universalhaven.service.DonationServiceLocal;
-import tn.undefined.universalhaven.service.PaypalServiceRemote;
-import tn.undefined.universalhaven.service.StripeServiceRemote;
+import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
+import tn.undefined.universalhaven.util.DonationParam;
 
 @Path("donation")
 @RequestScoped
-public class DonationRestService {
+public class DonationResource {
 
 	@EJB
 	PaypalServiceRemote servicePaypal;
@@ -44,104 +38,101 @@ public class DonationRestService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
 	public Collection<Donation> getAll() {
 		return serviceDonation.getAll();
 	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response donate(Donation donation, @QueryParam(value = "method") String method,
-			@QueryParam(value = "token") String token, @QueryParam(value = "creditCardType") String creditCardType,
-			@QueryParam(value = "creditCardNumber") String creditCardNumber,
-			@QueryParam(value = "expireMonth") int expireMonth, @QueryParam(value = "expireYear") int expireYear,
-			@QueryParam(value = "cvv2") String cvv2) {
-		if (method.equals("paypal")) {
-			System.out.println(String.valueOf(donation.getAmount()));
-			String reference = servicePaypal.pay(String.valueOf(donation.getAmount()), creditCardType, creditCardNumber, expireMonth,
-					expireYear, cvv2, donation.getContributorName(), donation.getContributorName());
+	public Response donate(DonationParam param) {
+		if (param.getMethod().equals("paypal")) {
+			System.out.println(String.valueOf(param.getDonation().getAmount()));
+			String reference = servicePaypal.pay(String.valueOf(param.getDonation().getAmount()), param.getCreditCardType()
+					, param.getCreditCardNumber(),
+					param.getExpireMonth(), param.getExpireYear(), param.getCvv2(), param.getDonation().getContributorName(), param.getDonation().getContributorName());
 			if (reference.equals("") == false) {
-				donation.setPaymentMethod("paypal");
-				donation.setTransactionReference(reference);
-				serviceDonation.add(donation);
-				return ResponseUtil.buildOk("Paypal payment successful and donation persisted");			
-						
+				param.getDonation().setPaymentMethod("paypal");
+				param.getDonation().setTransactionReference(reference);
+				serviceDonation.add(param.getDonation());
+				return ResponseUtil.buildOk("Paypal payment successful and donation persisted");
+
 			} else {
 				return ResponseUtil.buildError("Paypal payment failed");
 			}
 		} else {
-			Double amountDouble = donation.getAmount();
+			Double amountDouble = param.getDonation().getAmount();
 			int amountInt = amountDouble.intValue();
-			String reference = serviceStripe.pay(token, amountInt, donation.getContributorName());
+			String reference = serviceStripe.pay(param.getToken(), amountInt, param.getDonation().getContributorName());
 			if (reference.equals("") == false) {
-				donation.setPaymentMethod("stripe");
-				donation.setTransactionReference(reference);
-				serviceDonation.add(donation);
+				param.getDonation().setPaymentMethod("stripe");
+				param.getDonation().setTransactionReference(reference);
+				serviceDonation.add(param.getDonation());
 				return ResponseUtil.buildOk("Stripe payment successful and donation persisted");
 			}
 			return ResponseUtil.buildError("Stripe payment failed");
 		}
 	}
-	
-	
+
 	@GET
 	@Path("bycountry")
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
-	public Response donationsPerCountry(){
-		return ResponseUtil.buildOk(serviceDonation.getDonationsByCountry()); 
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response donationsPerCountry() {
+		return ResponseUtil.buildOk(serviceDonation.getDonationsByCountry());
 	}
-	
+
 	@GET
 	@Path("/bycountry/average")
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
-	public Response countriesDonationAverage(){
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response countriesDonationAverage() {
 		return ResponseUtil.buildOk(serviceDonation.getCountriesDonationAverage());
 	}
-	
-	
-	
+
 	@GET
 	@Path("bydate/overall")
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
-	public Response overAllDonationsByDate(){
-		Map<String, Double> stats=  new HashMap<>();
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response overAllDonationsByDate() {
+		Map<String, Double> stats = new HashMap<>();
 		stats.put("thismonth", serviceDonation.getDonationsThisMonth());
 		stats.put("thisyear", serviceDonation.getDonationsThisYear());
 		stats.put("today", serviceDonation.getDonationsToday());
-		return ResponseUtil.buildOk(stats); 
+		return ResponseUtil.buildOk(stats);
 	}
-	
+
 	@GET
 	@Path("bydate")
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
-	public Response donationsPerDay(){
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response donationsPerDay() {
 		return ResponseUtil.buildOk(serviceDonation.getDonationsByDay());
 	}
-	
-	
+
 	@GET
 	@Path("bymethod")
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
-	public Response donationsByMethod(){
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response donationsByMethod() {
 		return ResponseUtil.buildOk(serviceDonation.getDonationsByPaymentMethod());
 	}
-	
-	
+
 	@GET
 	@Path("average")
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
-	public Response averageDonation(){
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response averageDonation() {
 		return ResponseUtil.buildOk(serviceDonation.getAverage());
 	}
 	
-	
-	
-	
+	@GET
+	@Path("bydate/bymonth")
+	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response donationsByMonth() {
+		return ResponseUtil.buildOk(serviceDonation.getDonationsByMonth());
+	}
+
 
 }

@@ -19,4 +19,5 @@ public interface DonationServiceLocal {
 	public Map<String,Double> getDonationsByPaymentMethod();
 	public Double getAverage();
 	public Map<String,Double> getCountriesDonationAverage();
+	public Map<String, Double> getDonationsByMonth() ;
 }

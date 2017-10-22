@@ -1,17 +1,10 @@
 package tn.undefined.universalhaven.resources;
 
 import java.security.Key;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
-import tn.undefined.universalhaven.enumerations.UserRole;
-import tn.undefined.universalhaven.buisness.UserServiceLocalMehdi;
-import tn.undefined.universalhaven.util.KeyGenerator;
-import tn.undefined.universalhaven.util.SimpleKeyGenerator;
-
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -21,9 +14,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import tn.undefined.universalhaven.buisness.UserServiceLocalMehdi;
+import tn.undefined.universalhaven.enumerations.UserRole;
+import tn.undefined.universalhaven.util.KeyGenerator;
+import tn.undefined.universalhaven.util.SimpleKeyGenerator;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)

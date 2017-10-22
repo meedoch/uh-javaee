@@ -157,5 +157,23 @@ public class DonationService implements DonationServiceLocal {
 		return resultMap;
 
 	}
+	
+	
+	@Override
+	public Map<String, Double> getDonationsByMonth() {
+		
+		
+		Query query = em.createQuery("SELECT YEAR(d.donationDate)," + "MONTH(d.donationDate),"
+				+ "SUM(d.amount) from Donation d" + " GROUP BY YEAR(d.donationDate), " + " MONTH(d.donationDate)");
+
+		List<Object[]> results = query.getResultList();
+		Map<String, Double> resultMap = new HashMap<>();
+		for (Object[] result : results) {
+			
+			String month = (String.valueOf((int) result[1])) +"/"+(String.valueOf((int) result[0]));
+			resultMap.put(month, (Double) (result[2]));
+		}
+		return resultMap;
+	}
 
 }
