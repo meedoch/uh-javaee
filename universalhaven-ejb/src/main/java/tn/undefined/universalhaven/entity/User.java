@@ -32,6 +32,7 @@ public class User extends Person{
 	private String motivation;
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
+	private Boolean isActif=true;
 	private boolean subscribed;
 	private String token;
 	@XmlTransient
@@ -173,8 +174,63 @@ public class User extends Person{
 		this.assignedCamp = assignedCamp;
 	}
 	
-
 	
+	
+
+	public Boolean getIsActif() {
+		return isActif;
+	}
+
+
+	public void setIsActif(Boolean isActif) {
+		this.isActif = isActif;
+	}
+
+	@XmlTransient
+	public Camp getManagedCamp() {
+		return managedCamp;
+	}
+
+	@XmlTransient
+	public void setManagedCamp(Camp managedCamp) {
+		this.managedCamp = managedCamp;
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((login == null) ? 0 : login.hashCode());
+		return result;
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} 
+		
+		if (login == null) {
+			if (other.login != null)
+				return false;
+		}
+		 if (login.equals(other.login) || email.equals(other.email)  )
+			return true;
+		return false ;
+	
+	}
 	
 	
 	
