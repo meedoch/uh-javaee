@@ -13,10 +13,11 @@ import tn.undefined.universalhaven.entity.User;
 public interface FundraisingEventServiceRemote {
 	public Map<String, Double> getAverageCompletionDate();
 	public Map<String, Long> getEventCountByCountry();
+	public Map<String, Long> getCountEventByMonth();
 	public List<FundraisingEvent> listActiveEvents();
 	public List<FundraisingEvent> listEventsByUser(User user);
-	public void startEvent(FundraisingEvent event/*,long idCamp,long idUser*/);
-	public void updateEvent(FundraisingEvent event);
+	public boolean startEvent(FundraisingEvent event);
+	public boolean updateEvent(FundraisingEvent event);
 	public void changeEventState(FundraisingEvent event);
 	public List<FundraisingEventDto> listActiveEventsDto();
 	public List<FundraisingEventDto> listEventsByUserDto(User user);

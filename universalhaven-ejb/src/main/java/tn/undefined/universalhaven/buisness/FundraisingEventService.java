@@ -83,14 +83,28 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 	}
 
 	@Override
-	public void startEvent(FundraisingEvent event){
-		event.setState("In progress");
-		em.persist(event);
+	public boolean startEvent(FundraisingEvent event){
+		  try {
+			event.setState("In progress");
+			em.persist(event);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		 
 	}
 
 	@Override
-	public void updateEvent(FundraisingEvent event) {
-		em.merge(event);
+	public boolean updateEvent(FundraisingEvent event) {
+		
+		try {
+			em.merge(event);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 		
 	}
 
@@ -158,6 +172,19 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 		double result=query.getSingleResult();
 		System.out.println("somme: "+result);
 		return result;
+	}
+
+	@Override
+	public Map<String, Long> getCountEventByMonth() {
+		Query query = em.createQuery("SELECT MONTHNAME(f.publishDate),count(f.id),extract(month from f.publishDate )from FundraisingEvent f "
+		+ "WHERE extract(year from f.publishDate )=2017 GROUP BY MONTHNAME(f.publishDate),extract(month from f.publishDate ) ORDER by extract(month from f.publishDate ) ");
+		List<Object[]> results = query.getResultList();
+		Map<String, Long> resultMap = new HashMap<>();
+		for (Object[] result : results) {
+			resultMap.put((String) result[0], (Long) (result[1]));
+			System.out.println("month: "+(String) result[0]+" number of event(s):  "+(Long) (result[1]));
+		}
+		return resultMap ;
 	}
 
 }
