@@ -16,7 +16,7 @@ import javax.persistence.Query;
 import tn.undefined.universalhaven.entity.Donation;
 
 @Stateless
-public class DonationService implements DonationServiceLocal {
+public class DonationService implements DonationServiceLocal,DonationServiceRemote {
 
 	@PersistenceContext
 	private EntityManager em;
