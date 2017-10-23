@@ -12,7 +12,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -28,53 +27,8 @@ import tn.undefined.universalhaven.buisness.MailServiceLocal;
 public class MailRestService {
 	@EJB 
 	  MailServiceLocal serviceMail; 
-	
-/*	 @POST 
-	  @Path("/send")
-	  @Consumes (MediaType.APPLICATION_JSON) 
-	  @Produces(MediaType.APPLICATION_JSON) 
-	  public Response SendMail(Mail mail){ 
-		
-		  try{
-	          String host ="smtp.gmail.com" ;
-	          String user = mail.getSenderMail();
-	          String pass = mail.getMailPassword();
-	          String to = "customercare@universalhaven.com";
-	          String from = mail.getSenderMail();
-	          String subject = mail.getSubject();
-	          String messageText = mail.getContent();
-	          boolean sessionDebug = false;
-	          Properties props = System.getProperties();
-	          props.put("mail.smtp.starttls.enable", "true");
-	          props.put("mail.smtp.host", host);
-	          props.put("mail.smtp.port", "587");
-	          props.put("mail.smtp.auth", "true");
-	          props.put("mail.smtp.starttls.required", "true");
 
-	          //java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-	          Session mailSession = Session.getDefaultInstance(props, null);
-	          mailSession.setDebug(sessionDebug);
-	          Message msg = new MimeMessage(mailSession);
-	          msg.setFrom(new InternetAddress(from));
-	          InternetAddress[] address = {new InternetAddress(to)};
-	          msg.setRecipients(Message.RecipientType.TO, address);
-	          msg.setSubject(subject); msg.setSentDate(new Date());
-	          msg.setText(messageText);
-
-	         Transport transport=mailSession.getTransport("smtp");
-	         transport.connect(host, user, pass);
-	         transport.sendMessage(msg, msg.getAllRecipients());
-	         transport.close();
-	         System.out.println("message send successfully");
-	         return Response.ok().entity("message send successfully").build(); 
-	      }catch(Exception ex)
-	      {
-	          System.out.println(ex);
-	          return Response.status(Status.NOT_ACCEPTABLE).entity("problem of sending the message").build();
-	      }
-	  } */
 	  @POST 
-	  @Path("/send")
 	  @Consumes (MediaType.APPLICATION_JSON)
 	  public Response SendMail(Mail mail){ 
 	    if (serviceMail.contacterNous(mail)){ 
@@ -90,7 +44,6 @@ public class MailRestService {
 	  @POST 
 	  @Path("/sendmail")
 	  @Consumes (MediaType.APPLICATION_JSON) 
-	  //@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
 	  public Response sendMailPer(MailParam param ){ 
 		  try{
 			  Mail mail = param.getMail();
@@ -130,21 +83,18 @@ public class MailRestService {
 	         transport.sendMessage(msg, msg.getAllRecipients());
 	         transport.close();
 	         System.out.println("NewsLetter sended successfully");
-	         return Response.ok().entity("NewsLetter sended successfully").build(); 
+	         return Response.status(Status.ACCEPTED).entity("NewsLetter sended successfully").build(); 
 	      }catch(Exception ex)
 	      {
 	          System.out.println(ex);
 	          return Response.status(Status.NOT_ACCEPTABLE).entity("Problem of sending the NewsLetter").build();
 	      }
-		    
-
-	     
 	  }
 		
 	  @POST 
 	  @Path("/newsletter")
 	  @Consumes (MediaType.APPLICATION_JSON) 
-	  //@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
+	  @JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
 	  public Response SendNewsLetter(Mail mail){ 
 		  try{
 	          String host ="smtp.gmail.com" ;
@@ -157,14 +107,11 @@ public class MailRestService {
 	          boolean sessionDebug = false;
 	          String[] recipientList = to.split(",");
 	          Properties props = System.getProperties();
-
 	          props.put("mail.smtp.starttls.enable", "true");
 	          props.put("mail.smtp.host", host);
 	          props.put("mail.smtp.port", "587");
 	          props.put("mail.smtp.auth", "true");
 	          props.put("mail.smtp.starttls.required", "true");
-
-	          //java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	          Session mailSession = Session.getDefaultInstance(props, null);
 	          mailSession.setDebug(sessionDebug);
 	          Message msg = new MimeMessage(mailSession);
@@ -190,13 +137,10 @@ public class MailRestService {
 	          System.out.println(ex);
 	          return Response.status(Status.NOT_ACCEPTABLE).entity("Problem of sending the NewsLetter").build();
 	      }
-		    
-
-	     
 	  }
 	  	@DELETE
 	    @Consumes (MediaType.APPLICATION_JSON)
-	   	//@JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
+	   	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
 	 	public Response deleteMail(Mail mail)
 	 	{
 	 	  if (serviceMail.deleteMail(mail)){ 
@@ -207,4 +151,50 @@ public class MailRestService {
 	 	    } 
 	    
 	 }
+	  	
+		
+	  	/*	 @POST 
+	  		  @Path("/send")
+	  		  @Consumes (MediaType.APPLICATION_JSON) 
+	  		  @Produces(MediaType.APPLICATION_JSON) 
+	  		  public Response SendMail(Mail mail){ 
+	  			
+	  			  try{
+	  		          String host ="smtp.gmail.com" ;
+	  		          String user = mail.getSenderMail();
+	  		          String pass = mail.getMailPassword();
+	  		          String to = "customercare@universalhaven.com";
+	  		          String from = mail.getSenderMail();
+	  		          String subject = mail.getSubject();
+	  		          String messageText = mail.getContent();
+	  		          boolean sessionDebug = false;
+	  		          Properties props = System.getProperties();
+	  		          props.put("mail.smtp.starttls.enable", "true");
+	  		          props.put("mail.smtp.host", host);
+	  		          props.put("mail.smtp.port", "587");
+	  		          props.put("mail.smtp.auth", "true");
+	  		          props.put("mail.smtp.starttls.required", "true");
+
+	  		          //java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+	  		          Session mailSession = Session.getDefaultInstance(props, null);
+	  		          mailSession.setDebug(sessionDebug);
+	  		          Message msg = new MimeMessage(mailSession);
+	  		          msg.setFrom(new InternetAddress(from));
+	  		          InternetAddress[] address = {new InternetAddress(to)};
+	  		          msg.setRecipients(Message.RecipientType.TO, address);
+	  		          msg.setSubject(subject); msg.setSentDate(new Date());
+	  		          msg.setText(messageText);
+
+	  		         Transport transport=mailSession.getTransport("smtp");
+	  		         transport.connect(host, user, pass);
+	  		         transport.sendMessage(msg, msg.getAllRecipients());
+	  		         transport.close();
+	  		         System.out.println("message send successfully");
+	  		         return Response.ok().entity("message send successfully").build(); 
+	  		      }catch(Exception ex)
+	  		      {
+	  		          System.out.println(ex);
+	  		          return Response.status(Status.NOT_ACCEPTABLE).entity("problem of sending the message").build();
+	  		      }
+	  		  } */
 }

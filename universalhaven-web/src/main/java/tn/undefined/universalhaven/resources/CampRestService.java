@@ -12,17 +12,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType; 
 import javax.ws.rs.core.Response; 
 import javax.ws.rs.core.Response.Status; 
-import javax.ws.rs.PathParam;
 import tn.undefined.universalhaven.entity.Camp;
-import tn.undefined.universalhaven.entity.Mail;
 import tn.undefined.universalhaven.enumerations.UserRole;
 import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 import tn.undefined.universalhaven.buisness.CampServiceLocal; 
 import java.util.*;
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.mail.internet.MimeMessage;
-
 @Path("camp") 
 @RequestScoped 
 public class CampRestService { 
@@ -34,7 +28,7 @@ public class CampRestService {
   @GET 
   @Path("/findallcamps")
   @Produces(MediaType.APPLICATION_JSON) 
-  @JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
+  @JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
   public Response getallcamps(){ 
     List<Camp> camps = new ArrayList<>(); 
     
@@ -49,26 +43,23 @@ public class CampRestService {
   @GET 
   @Path("/findbycountry")
   @Produces(MediaType.APPLICATION_JSON) 
-  @JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
-  public Map<String,List<Camp>> getallpercountry(){ 
+  @JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
+  public Response getallpercountry(){ 
 	  Map<String,List<Camp>>  camps ;
 	  camps = (serviceCamp.ListCampPerCountry());
-	  if(camps.isEmpty()==false){
-		  System.out.println("is empty");
-	  } 
-    return camps; 
+    return Response.status(Status.CREATED).entity(camps).build();  
   } 
   @GET 
   @Path("/countcamps")
   @Produces(MediaType.APPLICATION_JSON) 
-  @JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
-  public  Map<String, Long>  countAllCampsPerCountry(){ 
+  @JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
+  public  Response  countAllCampsPerCountry(){ 
 	  Map<String, Long>   camps ;
 	  camps = (serviceCamp.CountCampPerCountry());
 	  if(camps.isEmpty()==false){
 		  System.out.println("is empty");
 	  } 
-    return camps; 
+	  return Response.ok(camps).build(); 
   } 
   @GET 
   @Produces(MediaType.APPLICATION_JSON) 
@@ -79,7 +70,7 @@ public class CampRestService {
   } 
   @POST 
   @Consumes (MediaType.APPLICATION_JSON) 
-  //@JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
+  @JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
   public Response create(Camp camp){ 
      
     if (serviceCamp.CreateCamp(camp)){ 
@@ -93,7 +84,7 @@ public class CampRestService {
   	@PUT
   	@Path("/disbandcamps")
    @Consumes (MediaType.APPLICATION_FORM_URLENCODED)
-  	@JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
+  	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
 	public Response disbandCamps(@FormParam(value= "id")long campId)
 	{
 	  if (serviceCamp.disbandCamp(campId)){ 
@@ -106,7 +97,7 @@ public class CampRestService {
 }
   	@PUT
    @Consumes (MediaType.APPLICATION_JSON)
-  	
+  	@JWTTokenNeeded(role=UserRole.ICRC_MANAGER)
 	public Response UpdateCamps(Camp camp)
 	{
   		if (serviceCamp.updateCamp(camp)){ 
