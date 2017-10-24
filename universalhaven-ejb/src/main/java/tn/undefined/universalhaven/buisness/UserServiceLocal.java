@@ -18,7 +18,7 @@ public interface UserServiceLocal {
 
 	boolean banUser(long id);
 
-	public boolean addUser(User user);
+	public int addUser(User user);
 
 	public int getAgeAverage(); // for statistic    
 
@@ -34,11 +34,17 @@ public interface UserServiceLocal {
 
 	public List<User> searchForUser(String name);
 
-	public boolean updateUser(User user);
+	public int updateUser(User user);
 
 	
-	public User findUser();
+	public User findUser(String email , String login);
 	
 	public int changePassword(String old ,String neew , String username);
+
+	 String Fbcon();
+
+	boolean checkPassword(User u);
+
+	int addPassword( String password,String email,String hashed);
 
 }

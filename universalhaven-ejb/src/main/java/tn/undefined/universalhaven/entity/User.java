@@ -1,50 +1,58 @@
 package tn.undefined.universalhaven.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import tn.undefined.universalhaven.enumerations.UserRole;
 
 @Entity
+@DiscriminatorValue(value="user")
 @XmlRootElement
-public class User extends Person{
+public class User extends Person implements Serializable {
 	private String email;
 	private String address;
 	private String login;
 	private String password;
-	private Date subscriptionDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date subscriptionDate=new Date();
 	private String skills;
 	private String profession;
 	private String motivation;
 	@Enumerated(EnumType.STRING)
-	private UserRole role;
+	private UserRole role = UserRole.VOLUNTEER;
+	private Boolean subscribed=false;
+	
 	private Boolean isActif=true;
-	private boolean subscribed;
-	private String token;
+	
+	@OneToMany(mappedBy="publisher",fetch=FetchType.LAZY)
 	@XmlTransient
-	@OneToMany(mappedBy="publisher", fetch = FetchType.LAZY)
 	private List<FundraisingEvent> fundraisingEvents;
+	
 	// Tasks li lezem ya3melhom
 	@XmlTransient
 	@OneToMany(mappedBy="taskExecutor")
+	
 	private List<Task> tasksToDo;
 	
+	
 	// Tasks li 3tahom 
-	@XmlTransient
 	@OneToMany(mappedBy="taskAssigner")
 	private List<Task> assignedTasks;
 	
@@ -52,13 +60,15 @@ public class User extends Person{
 	@XmlTransient
 	private Camp managedCamp;
 	
-	@ManyToOne
+	@ManyToOne()
 	@XmlTransient
 	private Camp assignedCamp;
-	
-	
+
 	public User() {
 		super();
+		fundraisingEvents = new ArrayList<>();
+		tasksToDo = new ArrayList<>();
+		assignedTasks = new ArrayList<>();
 	}
 	
 	
@@ -72,83 +82,104 @@ public class User extends Person{
 		super(id);
 		// TODO Auto-generated constructor stub
 	}
-
-
+	
+	
+	
+	
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getAddress() {
 		return address;
 	}
+
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
 	public String getLogin() {
 		return login;
 	}
+
 	public void setLogin(String login) {
 		this.login = login;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
+
 	public Date getSubscriptionDate() {
 		return subscriptionDate;
 	}
+
 	public void setSubscriptionDate(Date subscriptionDate) {
 		this.subscriptionDate = subscriptionDate;
 	}
+
 	public String getSkills() {
 		return skills;
 	}
+
 	public void setSkills(String skills) {
 		this.skills = skills;
 	}
+
 	public String getProfession() {
 		return profession;
 	}
+
 	public void setProfession(String profession) {
 		this.profession = profession;
 	}
+
 	public String getMotivation() {
 		return motivation;
 	}
+
 	public void setMotivation(String motivation) {
 		this.motivation = motivation;
 	}
-	
 	@Enumerated(EnumType.STRING)
 	public UserRole getRole() {
 		return role;
 	}
+
 	public void setRole(UserRole role) {
 		this.role = role;
 	}
-	
-	public boolean isSubscribed() {
+
+	public Boolean getSubscribed() {
 		return subscribed;
 	}
-	public void setSubscribed(boolean subscribed) {
+
+	public void setSubscribed(Boolean subscribed) {
 		this.subscribed = subscribed;
 	}
-	public String getToken() {
-		return token;
+
+
+
+	public Boolean getIsActif() {
+		return isActif;
 	}
-	public void setToken(String token) {
-		this.token = token;
+
+	public void setIsActif(Boolean isActif) {
+		this.isActif = isActif;
 	}
 	@XmlTransient
 	public List<FundraisingEvent> getFundraisingEvents() {
 		return fundraisingEvents;
 	}
+
 	public void setFundraisingEvents(List<FundraisingEvent> fundraisingEvents) {
 		this.fundraisingEvents = fundraisingEvents;
 	}
@@ -156,6 +187,7 @@ public class User extends Person{
 	public List<Task> getTasksToDo() {
 		return tasksToDo;
 	}
+
 	public void setTasksToDo(List<Task> tasksToDo) {
 		this.tasksToDo = tasksToDo;
 	}
@@ -163,38 +195,27 @@ public class User extends Person{
 	public List<Task> getAssignedTasks() {
 		return assignedTasks;
 	}
+
 	public void setAssignedTasks(List<Task> assignedTasks) {
 		this.assignedTasks = assignedTasks;
 	}
-	@XmlTransient
-	public Camp getAssignedCamp() {
-		return assignedCamp;
-	}
-	public void setAssignedCamp(Camp assignedCamp) {
-		this.assignedCamp = assignedCamp;
-	}
-	
-	
-	
-
-	public Boolean getIsActif() {
-		return isActif;
-	}
-
-
-	public void setIsActif(Boolean isActif) {
-		this.isActif = isActif;
-	}
-
 	@XmlTransient
 	public Camp getManagedCamp() {
 		return managedCamp;
 	}
 
-	@XmlTransient
 	public void setManagedCamp(Camp managedCamp) {
 		this.managedCamp = managedCamp;
 	}
+	@XmlTransient
+	public Camp getAssignedCamp() {
+		return assignedCamp;
+	}
+
+	public void setAssignedCamp(Camp assignedCamp) {
+		this.assignedCamp = assignedCamp;
+	}
+
 
 
 	@Override
@@ -231,6 +252,21 @@ public class User extends Person{
 		return false ;
 	
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "User [email=" + email + ", address=" + address + ", login=" + login + ", password=" + password
+				+ ", subscriptionDate=" + subscriptionDate + ", skills=" + skills + ", profession=" + profession
+				+ ", motivation=" + motivation + ", role=" + role + ", subscribed=" + subscribed + ", isActif="
+				+ isActif + "]";
+	}
+	
+	
+	
+
+	
 	
 	
 	
