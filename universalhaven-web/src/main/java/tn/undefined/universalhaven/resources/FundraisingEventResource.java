@@ -11,6 +11,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -25,6 +26,7 @@ import tn.undefined.universalhaven.buisness.FundraisingEventServiceLocal;
 import tn.undefined.universalhaven.dto.FundraisingEventDto;
 import tn.undefined.universalhaven.entity.FundraisingEvent;
 import tn.undefined.universalhaven.entity.User;
+import tn.undefined.universalhaven.enumerations.Urgency;
 import tn.undefined.universalhaven.enumerations.UserRole;
 import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 /*http://localhost:18080/universalhaven-web/rest/fundraisingEvent/*/
@@ -34,17 +36,47 @@ public class FundraisingEventResource {
 	@EJB
 	FundraisingEventServiceLocal fundraisingEventService;
 	
+	/*{"title":"ddd","description":"eeee","goal":500,"imagePath":"aa.png","state":"In progress",
+	  "urgency":"HIGH","publisher":1,"camp":2}*/
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
+	public Response addEvent(FundraisingEvent event) {
+		if(fundraisingEventService.startEvent(event)==true){
+			return Response.status(Status.CREATED).entity("event added succesfully").build();
+		}
+		return Response.status(Status.NOT_ACCEPTABLE).entity("event added failed").build();
+		
+	}
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
+	public Response updateEvent(FundraisingEvent event) {
+		if(fundraisingEventService.updateEvent(event)){
+			return Response.status(Status.ACCEPTED).entity("event updated succesfully").build();
+		}
+		return Response.status(Status.NOT_ACCEPTABLE).entity("event update failed").build();
+		
+	}
+	//@JWTTokenNeeded(role=UserRole.SUPER_ADMIN)
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role=UserRole.SUPER_ADMIN)
 	public Response getAll(){
 		if(fundraisingEventService.listActiveEventsDto()==null)
 			return null;
 		return Response.status(Status.OK).entity(fundraisingEventService.listActiveEventsDto()).build();
 	}	
+	@Path("avgCompletionEvent")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAvgCompletionEvent(){
+		if(fundraisingEventService.getAverageCompletionDate()==null)
+			return null;
+		return Response.status(Status.OK).entity(fundraisingEventService.getAverageCompletionDate()).build();
+		
+	}
 	//http://localhost:18080/universalhaven-web/rest/fundraisingEvent/stat	
-	
-	@Path("stat")
+	@Path("eventByCountry")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCountEventPerCountry(){
@@ -53,21 +85,6 @@ public class FundraisingEventResource {
 		return Response.status(Status.OK).entity(fundraisingEventService.getEventCountByCountry()).build();
 		
 	}
-	@Path("eventCountByMonth")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCountEventPerMonth(){
-		if(fundraisingEventService.getCountEventByMonth()==null)
-			return null;
-		return Response.status(Status.OK).entity(fundraisingEventService.getCountEventByMonth()).build();
-		
-	}
-	/*@Path("user/{id}")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<FundraisingEventDto> getEventByUser(@PathParam("id")long idUser){
-		return fundraisingEventService.listEventsByUserDto(idUser);
-	}*/
 	/*{"id":1}*/
 	@Path("user")
 	@POST
@@ -78,37 +95,37 @@ public class FundraisingEventResource {
 		return Response.status(Status.ACCEPTED).entity(fundraisingEventService.listEventsByUserDto(user)).build();
 		
 	}
-	/*{"title":"ddd","description":"eeee","goal":500,"imagePath":"aa.png","state":"In progress",
-	  "urgency":"HIGH","publisher":1,"camp":2}*/
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEvent(FundraisingEvent event) {
-		if(fundraisingEventService.startEvent(event)==true){
-			return Response.status(Status.CREATED).entity("event added succesfully").build();
-		}
-		return Response.status(Status.NOT_ACCEPTABLE).entity("event added failed").build();
-		
-	}
-	//http://localhost:18080/universalhaven-web/rest/fundraisingEvent/avgCompletionEvent
-	@Path("avgCompletionEvent")
+	@Path("event")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAvgCompletionEvent(){
-		if(fundraisingEventService.getAverageCompletionDate()==null)
-			return null;
-		return Response.status(Status.OK).entity(fundraisingEventService.getAverageCompletionDate()).build();
-		
-	}
-	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role=UserRole.CAMP_MANAGER)
-	public Response updateEvent(FundraisingEvent event) {
-		if(fundraisingEventService.updateEvent(event)){
-			return Response.status(Status.ACCEPTED).encoding("event updated succesfully").build();
+	public Response getEvent(@QueryParam("state") String state,@QueryParam("urgency") Urgency urgency,
+			@QueryParam("year") int year,@QueryParam("month") int month,@QueryParam("annee") int annee){
+		if(state!=null){
+			if(fundraisingEventService.listEventsByState(state)==null)
+				Response.status(Status.NOT_ACCEPTABLE).build();
+			return Response.status(Status.OK).entity(fundraisingEventService.listEventsByState(state)).build();
 		}
-		return Response.status(Status.NOT_ACCEPTABLE).entity("event updated failed").build();
+		if(urgency!=null){
+			if(fundraisingEventService.listEventsByUrgency(urgency)==null)
+				Response.status(Status.NOT_ACCEPTABLE).build();
+			return Response.status(Status.OK).entity(fundraisingEventService.listEventsByUrgency(urgency)).build();
+			
+		}
+		if(year!=0){
+			if(fundraisingEventService.getCountEventByMonth(year)==null)
+				return null;
+			return Response.status(Status.OK).entity(fundraisingEventService.getCountEventByMonth(year)).build();
+			
+		}
+		if((month!=0)||(annee!=0)){
+			if(fundraisingEventService.listEventsByYearAndMonth(month,annee)==null)
+				return null;
+			return Response.status(Status.OK).entity(fundraisingEventService.listEventsByYearAndMonth(month,annee)).build();
+		}
+		return Response.status(Status.NOT_FOUND).build();
 		
 	}
+	
 	public void genererExcel() throws IOException,WriteException{
 		List<FundraisingEventDto> liste=fundraisingEventService.listActiveEventsDto();
 		try{
