@@ -35,6 +35,7 @@ public class User extends Person implements Serializable {
 	private String skills;
 	private String profession;
 	private String motivation;
+	private String picture;
 	@Enumerated(EnumType.STRING)
 	private UserRole role = UserRole.VOLUNTEER;
 	private Boolean subscribed=false;
@@ -125,6 +126,16 @@ public class User extends Person implements Serializable {
 	public void setSubscriptionDate(Date subscriptionDate) {
 		this.subscriptionDate = subscriptionDate;
 	}
+
+	public String getPicture() {
+		return picture;
+	}
+
+
+	public void setPicture(String picture) {
+		this.picture = picture;
+	}
+
 
 	public String getSkills() {
 		return skills;
