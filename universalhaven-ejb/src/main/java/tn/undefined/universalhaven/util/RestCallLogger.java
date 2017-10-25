@@ -53,10 +53,11 @@ public class RestCallLogger implements RestCallLoggerInterface {
 				c.add(Calendar.MINUTE, 15);		
 				blacklistedAddresses.put(ipAddress , c.getTime());
 				logs.remove(ipAddress);
-				logger.log(ipAddress,uri);
+				logger.log(ipAddress,uri,"SEVERE");
 				throw new CallLimitExceededException();
 			}
 			logs.get(ipAddress).add(new Date());
+			logger.log(ipAddress,uri,"INFO");
 		}
 		else {
 			List<Date> dates = new ArrayList<>();
@@ -66,7 +67,7 @@ public class RestCallLogger implements RestCallLoggerInterface {
 	}
 	
 	
-	@Schedule(minute="*/2", hour="*", second="*")
+	@Schedule(minute="*/2", hour="*", second="*",persistent=false)
 	public void clearLogs() throws InterruptedException {
 		Calendar calendar= Calendar.getInstance();
 		calendar.add(Calendar.MINUTE, -1);

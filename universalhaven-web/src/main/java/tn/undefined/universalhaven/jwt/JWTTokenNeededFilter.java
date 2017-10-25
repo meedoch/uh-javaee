@@ -101,6 +101,7 @@ public class JWTTokenNeededFilter implements ContainerRequestFilter {
 			System.out.println("#### valid token : " + token);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("#### invalid token : " + token);
 			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity("Invalid JWT Token").build());
 		}

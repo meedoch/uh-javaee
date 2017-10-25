@@ -348,6 +348,26 @@ System.out.println(rol);
 		return false;
 
 	}
+	
+	@Override
+	public UserRole authenticate(String username, String password) throws Exception {
+		
+		Query query=  em.createQuery("select u from User u where login=:login");
+		query.setParameter("login", username);
+		
+		List<User> users = query.getResultList();
+		if ((users==null ) || (users.isEmpty())) {
+			throw new Exception();
+		}
+		
+		if (verifPassword(password, users.get(0).getPassword())==false) {
+			throw new Exception();
+		}
+		
+		return users.get(0).getRole();
+		
+		
+	}
 
 	/// hash passowrd end //
 

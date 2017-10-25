@@ -40,5 +40,7 @@ public interface UserServiceLocal {
 	public User findUser();
 	
 	public int changePassword(String old ,String neew , String username);
+	
+	public UserRole authenticate(String username, String password) throws Exception;
 
 }

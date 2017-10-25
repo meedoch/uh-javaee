@@ -13,14 +13,20 @@ import java.util.logging.SimpleFormatter;
 public class FileLogger {
 	private String file ="D:\\blacklist.log";
 	
-	public void log(String ipAddress,String endpoint) {
+	public void log(String ipAddress,String endpoint,String level) {
 		
 	    BufferedWriter writer;
 		try {
 			  writer = new BufferedWriter(new FileWriter(file,true));
 			  writer.append(System.lineSeparator());
-			  String str="[SEVERE : "+new Date()+" ] : Blacklisted ip address "+ipAddress+""
-			  		+ " while accessing endpoint : "+endpoint;
+			  String str="";
+			  if (level.equals("SEVERE"))
+				  str="["+level+" : "+new Date()+" ] : Blacklisted ip address "+ipAddress+""
+				  		+ " while accessing endpoint : "+endpoint;
+			  else {
+				  str="["+level+" : "+new Date()+" ] : Ip address "+ipAddress+""
+					  		+ "  accessed endpoint : "+endpoint;
+			  }
 			  writer.append(str);
 			     
 			  writer.close();
