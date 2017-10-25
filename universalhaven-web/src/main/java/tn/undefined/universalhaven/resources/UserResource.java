@@ -1,6 +1,7 @@
 package tn.undefined.universalhaven.resources;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +34,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 
@@ -49,8 +51,8 @@ public class UserResource {
 
 	@EJB
 	UserServiceLocal userService;
-	
-//////////////////////////////////////
+
+	//////////////////////////////////////
 	@Path("check") // this for test
 	@Consumes(MediaType.APPLICATION_JSON)
 	@POST
@@ -59,10 +61,9 @@ public class UserResource {
 		userService.checkPassword(user);
 
 	}
-	
-	
-///////////////////////////////////////
-	@Path("password")//  must be puted
+
+	///////////////////////////////////////
+	@Path("password") // must be puted
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Response addPasswordUser(@QueryParam("token") String token, @QueryParam("email") String email,
@@ -84,27 +85,22 @@ public class UserResource {
 
 		return Response.status(Status.FORBIDDEN).entity("please check your email field ").build();
 	}
-	
-	
-	
-/////////////////////////////
+
+	/////////////////////////////
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("ban")
 	@PUT
 	public Response banUser(User u) {
 
-	if(userService.banUser(u.getId()))
-	{
-		return Response.status(Status.OK).entity("user baned").build();
+		if (userService.banUser(u.getId())) {
+			return Response.status(Status.OK).entity("user baned").build();
+		}
+		return Response.status(Status.FORBIDDEN).entity("user does not exist").build();
+
 	}
-	return Response.status(Status.FORBIDDEN).entity("user does not exist").build();
-		 
-		
-	}
-	
-	
-/////////////////////////////////////////
+
+	/////////////////////////////////////////
 	// @Path("add")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@POST
@@ -124,10 +120,8 @@ public class UserResource {
 
 		return Response.status(Status.NOT_ACCEPTABLE).entity("please verif your fields or user exists").build();
 	}
-	
-	
-	
-//////////////////////////
+
+	//////////////////////////
 	@Path("hamdi")
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
@@ -138,9 +132,8 @@ public class UserResource {
 		return user;
 
 	}
-	
-	
-///////////////////////////////////
+
+	///////////////////////////////////
 	// @Path("update")
 	@Produces(MediaType.TEXT_PLAIN)
 	@PUT
@@ -168,11 +161,7 @@ public class UserResource {
 		return Response.status(Status.NOT_FOUND).entity("user not found").build();
 	}
 
-	
-
-	
-	
-///////////////////////
+	///////////////////////
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Response searchForUser(@QueryParam(value = "user") String variable) {
@@ -180,9 +169,8 @@ public class UserResource {
 		return Response.status(Status.OK).entity(userService.searchForUser(variable)).build();
 
 	}
-	
-	
-//////////////////////
+
+	//////////////////////
 	@Path("role") /// if not empty array
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
@@ -191,10 +179,7 @@ public class UserResource {
 		return Response.status(Status.OK).entity(userService.getUserPerRole(role)).build();
 	}
 
-	
-	
-	
-////////////////////////////
+	////////////////////////////
 	@POST
 	@Consumes("multipart/form-data")
 	public Response uploadFile(MultipartFormDataInput input) {
@@ -238,24 +223,24 @@ public class UserResource {
 		return Response.status(Status.OK).entity("Users Imported ").build();
 	}
 
-			private String getFileName(MultivaluedMap<String, String> headers) {
-				String[] contentDisposition = headers.getFirst("Content-Disposition").split(";");
-		
-				for (String filename : contentDisposition) {
-					if ((filename.trim().startsWith("filename"))) {
-		
-						String[] name = filename.split("=");
-		
-						String finalFileName = sanitizeFilename(name[1]);
-						return finalFileName;
-					}
-				}
-				return "unknown";
+	private String getFileName(MultivaluedMap<String, String> headers) {
+		String[] contentDisposition = headers.getFirst("Content-Disposition").split(";");
+
+		for (String filename : contentDisposition) {
+			if ((filename.trim().startsWith("filename"))) {
+
+				String[] name = filename.split("=");
+
+				String finalFileName = sanitizeFilename(name[1]);
+				return finalFileName;
 			}
-		
-			private String sanitizeFilename(String s) {
-				return s.trim().replaceAll("\"", "");
-			}
+		}
+		return "unknown";
+	}
+
+	private String sanitizeFilename(String s) {
+		return s.trim().replaceAll("\"", "");
+	}
 
 	///////////////////////////
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -282,9 +267,9 @@ public class UserResource {
 
 	@GET
 	@Path("fbconn")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 
-	public User conn() {
+	public Response conn() {
 		JSONObject jsonArray = new JSONObject();
 		String token = userService.Fbcon();
 		System.out.println(token);
@@ -311,60 +296,105 @@ public class UserResource {
 
 			}
 
-				conn.disconnect();
-	
-			} catch (MalformedURLException e) {
-	
-				e.printStackTrace();
-	
-			} catch (IOException e) {
-	
-				e.printStackTrace();
-	
-			}
-			System.out.println(jsonArray);
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	
-			User u = new User();
-			for (int i = 0; i < jsonArray.length(); i++) {
-				u.setGender(jsonArray.getString("gender").toString());
-				u.setName(jsonArray.getString("first_name").toString());
-				u.setSurname(jsonArray.getString("last_name").toString());
-				u.setEmail(jsonArray.getString("email").toString());
-				u.setLogin(jsonArray.getString("last_name").toString() + jsonArray.getString("first_name").toString());
-				try {
-					u.setBirthDate(dateFormat.parse(jsonArray.getString("birthday").toString()));
-				} catch (JSONException | ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			conn.disconnect();
+
+		} catch (MalformedURLException e) {
+
+			e.printStackTrace();
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
 
 		}
-		
+		System.out.println(jsonArray);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-		userService.addUser(u);
-
-		// partage sur facebook //
-		
-			String image = "http://img.thedailybeast.com/image/upload/v1492783077/articles/2013/06/12/it-s-about-time-united-nations-plans-refugee-camps-for-syrians-in-lebanon/130612-dettmer-syria-refugees-lebanon-tease_kkvdql.jpg";
-			String caption = "UniversalHaven";
-	
-			URL url1;
+		User u = new User();
+		for (int i = 0; i < jsonArray.length(); i++) {
+			u.setGender(jsonArray.getString("gender").toString());
+			u.setName(jsonArray.getString("first_name").toString());
+			u.setSurname(jsonArray.getString("last_name").toString());
+			u.setEmail(jsonArray.getString("email").toString());
+			u.setLogin(jsonArray.getString("last_name").toString() + jsonArray.getString("first_name").toString());
 			try {
-				url1 = new URL("https://graph.facebook.com/me/photos?url=" + image + "&caption=" + caption
-						+ "&access_token=" + token);
-				HttpURLConnection conn1 = (HttpURLConnection) url1.openConnection();
-				conn1.setRequestMethod("POST");
-				conn1.setRequestProperty("Accept", "application/json");
-				if (conn1.getResponseCode() != 200) {
-					throw new RuntimeException("Failed : HTTP error code : " + conn1.getResponseCode());
-				}
-			} catch (IOException e) {
+				u.setBirthDate(dateFormat.parse(jsonArray.getString("birthday").toString()));
+			} catch (JSONException | ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
+		}
+
+		partageFacebook(token);
+		u.setPicture(saveImageFB(token, u.getName() + u.getSurname()));
+
+		userService.addUser(u);
+		//////////// import user images ///////////////
+
+		return Response.status(Status.CREATED).entity("user signed up with facebook").build();
+	}
+
 	
-			return u;
+	
+	
+	//////////////////////
+	public void partageFacebook(String token) {
+		// partage sur facebook //
+
+		String image = "http://img.thedailybeast.com/image/upload/v1492783077/articles/2013/06/12/it-s-about-time-united-nations-plans-refugee-camps-for-syrians-in-lebanon/130612-dettmer-syria-refugees-lebanon-tease_kkvdql.jpg";
+		String caption = "UniversalHaven";
+
+		URL url1;
+		try {
+			url1 = new URL("https://graph.facebook.com/me/photos?url=" + image + "&caption=" + caption
+					+ "&access_token=" + token);
+			HttpURLConnection conn1 = (HttpURLConnection) url1.openConnection();
+			conn1.setRequestMethod("POST");
+			conn1.setRequestProperty("Accept", "application/json");
+			if (conn1.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : " + conn1.getResponseCode());
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	
+	
+	/////////////////////////////
+	public String saveImageFB(String token, String file) {
+		URL url;
+
+		try {
+			url = new URL("https://graph.facebook.com/me/picture?fields=url&type=large&access_token=" + token);
+
+			String path = "C:\\Users\\HD-EXECUTION\\universalhaven-javaee\\universalhaven-web\\src\\main\\webapp\\assets\\";
+			String path2 = path + file + ".jpg";
+			InputStream in = url.openStream();
+			FileOutputStream fos = new FileOutputStream(new File(path + file + ".jpg"));
+
+			int length = -1;
+			byte[] buffer = new byte[1024];// buffer for portion of data from
+			// connection
+			while ((length = in.read(buffer)) > -1) {
+				fos.write(buffer, 0, length);
+			}
+
+			fos.close();
+			in.close();
+			return path2;
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
