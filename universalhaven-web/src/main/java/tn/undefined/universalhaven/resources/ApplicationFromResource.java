@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,19 +37,28 @@ public class ApplicationFromResource {
 
 	@EJB
 	ApplicationFormServiceLocal applicationForm;
-
+	
+	
+/////////////////////
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response apply(ApplicationForm app) {
-		if (applicationForm.apply(app) == 1)
-			return Response.status(Status.ACCEPTED).entity(app).build();
+		int test = applicationForm.apply(app) ;
+		if (test == 1)
+			
+		return Response.status(Status.OK).entity("submition for application send , you will recive an email after confirmation . thnx   ").build();
 
+
+		if (test == -1)
+			return Response.status(Status.NOT_ACCEPTABLE).entity("you already submit an application form").build();
+
+		
 		return Response.status(Status.CONFLICT).entity("please check ur applicationForm Json").build();
 
 	}
 
-	@GET
+	/*@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAPPlcationForm() {
 
@@ -56,97 +66,131 @@ public class ApplicationFromResource {
 		return Response.status(Status.OK).entity(f).build();
 
 	}
-
+*/
+	
+	
+	
+	
+///////////////////////////////////
 	@GET
-	@Path("listApplication")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<ApplicationForm> listApplication() {
-
-		return applicationForm.listApplication();
-
-	}
-
-	@GET
-	@Path("listApplicationCountry")
+	//@Path("listApplicationCountry")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listApplicationPerCountry(@QueryParam(value = "country") String country) {
 		return Response.status(Status.OK).entity(applicationForm.listApplicationPerCountry(country)).build();
 
 	}
-
+	
+	
+	
+////////////////////////////
 	@GET
-	@Path("listApplicationPerGender")
+	//@Path("listApplicationPerGender")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listApplicationPerGender(@QueryParam(value = "gender") String gender) {
-		
+
 		return Response.status(Status.OK).entity(applicationForm.listApplicationPerGender(gender)).build();
 
 	}
 	
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("reviewApplication")
-	@PUT
-	  public Response reviewApplication(ApplicationForm application,@QueryParam(value = "review")boolean review , @QueryParam(value = "revieww") long revieww ){
-		 
-		return Response.status(Status.OK).entity(applicationForm.reviewApplication(application,review,revieww)).build();
-
-	  }
 	
-//ApplicationForm application, String name
-	@Path("upload/{applicationform}")
+///////////////////////////
+	@Produces(MediaType.TEXT_PLAIN)
+	//@Path("reviewApplication")
+	@PUT
+	public Response reviewApplication(ApplicationForm application, @QueryParam(value = "review") boolean review,
+			@QueryParam(value = "revieww") long revieww) {
+		if (applicationForm.reviewApplication(application, review, revieww) == 1)
+			return Response.status(Status.ACCEPTED).entity("Application accepted  and user added").build();
+		return Response.status(Status.FORBIDDEN).entity("only ICRC manger can handle this").build();
+
+	}
+	
+	
+	
+///////////////////////////////////////
+	// ApplicationForm application, String name
+	//@Path("{applicationform}")
 	@POST
 	@Consumes("multipart/form-data")
-	public Response addAttachment(MultipartFormDataInput input,@PathParam("applicationform") int application)
-	{
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response addAttachment(MultipartFormDataInput input) {
 		List<String> formatFile = new ArrayList<String>();
 		formatFile.add("jpeg");
 		formatFile.add("jpg");
 		formatFile.add("png");
+		int idApplication =0;
 		
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		List<InputPart> inputParts = uploadForm.get("file");
-
-		for (InputPart inputPart : inputParts) {
-		MultivaluedMap<String, String> headers = inputPart.getHeaders();
-		try {
-			InputStream inputStream = inputPart.getBody(InputStream.class, null);
-			byte[] bytes = IOUtils.toByteArray(inputStream);
-			String filename = getFileName(headers);
-
-			// test for file format //
-
-			String extension = "";
-			int i = filename.lastIndexOf('.');
-			if (i >= 0) {
-				extension = filename.substring(i + 1);
+		List<InputPart> id = uploadForm.get("application");
+		
+		// recuperation du l id from form //
+		String[] contentDisposition = new String[1000]  ;
+		for (InputPart inputPart : id){
+			MultivaluedMap<String, String> headers = inputPart.getHeaders();
+			 contentDisposition = headers.getFirst("Content-Disposition").split(";");
+			 try {
+				String idRecupere = inputPart.getBodyAsString();
+				idApplication = Integer.parseInt(idRecupere);
+			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-
-			if (!formatFile.contains(extension))   {
-				return Response.status(Status.NOT_ACCEPTABLE)
-						.entity("Format not supported  please use .jpeg .jpg .png  format").build();
-			}
-			// test for file format //
-
 			
-			String fileLocation = "C:\\Users\\HD-EXECUTION\\workspaceJBosss\\universalhaven-javaee\\universalhaven-web\\src\\main\\webapp\\assets\\"
-			+UUID.randomUUID().toString()		+ filename;
-
-			
-			
-			FileOutputStream fileOuputStream = new FileOutputStream(fileLocation);
-			fileOuputStream.write(bytes);
-			int iu = applicationForm.addAttachment(application, fileLocation);
-			// saveFile(inputStream, fileLocation);
-			// TODO: HERE you do whatever you want to do with the file
-			// ...
-
-		} catch (IOException e) {
-			return Response.status(Status.NOT_ACCEPTABLE).entity("please check the Id ").build();
-
 		}
+		// recuperation du l id from form //
+		
+		
+		for (InputPart inputPart : inputParts) {
+			MultivaluedMap<String, String> headers = inputPart.getHeaders();
+			try {
+				InputStream inputStream = inputPart.getBody(InputStream.class, null);
+				byte[] bytes = IOUtils.toByteArray(inputStream);
+				String filename = getFileName(headers);
+
+				// test for file format //
+
+				String extension = "";
+				int i = filename.lastIndexOf('.');
+				if (i >= 0) {
+					extension = filename.substring(i + 1);
+				}
+
+				if (!formatFile.contains(extension)) {
+					return Response.status(Status.NOT_ACCEPTABLE)
+							.entity("Format not supported  please use .jpeg .jpg .png  format").build();
+				}
+				// test for file format //
+
+				System.out.println(filename);
+				
+				String fileLocation = "C:\\Users\\HD-EXECUTION\\universalhaven-javaee\\universalhaven-web\\src\\main\\webapp\\assets\\"
+						+ UUID.randomUUID().toString() + filename;
+
+				FileOutputStream fileOuputStream = new FileOutputStream(fileLocation);
+				fileOuputStream.write(bytes);
+				int iu = applicationForm.addAttachment(idApplication, fileLocation);
+				if(iu==-1)
+				{
+					return Response.status(Status.NOT_ACCEPTABLE).entity("application does not exist ").build();
+
+				}
+				// saveFile(inputStream, fileLocation);
+				// TODO: HERE you do whatever you want to do with the file
+				// ...
+
+			} catch (IOException e) {
+				return Response.status(Status.NOT_ACCEPTABLE).entity("this aaplication does not exist ").build();
+
+			}
+		}
+		return Response.status(Status.OK).entity("Attachemnt added  ").build();
+		
+		
+		
 	}
-	return Response.status(Status.OK).entity("Attachemnt added  ").build();
-	}
+
 	private String getFileName(MultivaluedMap<String, String> headers) {
 		String[] contentDisposition = headers.getFirst("Content-Disposition").split(";");
 
@@ -161,10 +205,22 @@ public class ApplicationFromResource {
 		}
 		return "unknown";
 	}
+	
+	
 
 	private String sanitizeFilename(String s) {
 		return s.trim().replaceAll("\"", "");
 	}
 	
 	
+	
+		///////////////////////////////////
+		@GET
+		@Path("listApplication")
+		@Produces(MediaType.APPLICATION_JSON)
+		public Response listApplication() {
+				
+		return Response.status(Status.OK).entity(applicationForm.listApplication()).build();
+				
+		}
 }

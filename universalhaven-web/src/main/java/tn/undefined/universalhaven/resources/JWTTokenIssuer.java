@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import tn.undefined.universalhaven.buisness.UserServiceLocal;
 import tn.undefined.universalhaven.buisness.UserServiceLocalMehdi;
 import tn.undefined.universalhaven.enumerations.UserRole;
 import tn.undefined.universalhaven.util.KeyGenerator;
@@ -29,7 +30,7 @@ public class JWTTokenIssuer {
 	 	
 	
 		@EJB
-		UserServiceLocalMehdi userService;
+		UserServiceLocal userService;
 		
 	    private KeyGenerator keyGenerator = new SimpleKeyGenerator();
 	 

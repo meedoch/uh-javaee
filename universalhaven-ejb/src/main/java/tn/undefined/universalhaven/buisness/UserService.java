@@ -33,6 +33,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.swing.text.StyledEditorKit.BoldAction;
 import javax.transaction.Transactional;
+import javax.xml.registry.infomodel.EmailAddress;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.poi.ss.usermodel.Cell;
@@ -40,6 +41,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
 
 import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.User;
@@ -66,15 +72,47 @@ public class UserService implements UserServiceLocal {
 	}
 
 	@Override
-	public boolean addUser(User user) {
+	public int addUser(User user) {
 		try {
+			
+			User verif = findUser(user.getEmail(), user.getLogin());
 
-			em.persist(user);
-			user.setPassword(generateHash(user.getPassword()));
-			return true;
+			
+
+			if (verif.getEmail() == null || verif.getLogin() == null) {
+				
+				if (user.getPassword() != null) {
+					user.setPassword(generateHash(user.getPassword()));
+				}
+				if (user.getPassword() == null) {
+				
+					if(!checkPassword(user))
+						return  0 ;
+				}
+				em.persist(user);
+				return 1;
+			}
+
+			if (verif.getEmail() != null || verif.getLogin() != null) {
+				if (verif.getEmail().equalsIgnoreCase(user.getEmail())
+						|| verif.getLogin().equalsIgnoreCase(user.getLogin())) {
+					return -1;
+				}
+				em.persist(user);
+				if (user.getPassword() != null) {
+					user.setPassword(generateHash(user.getPassword()));
+				}
+				if (user.getPassword() == null) {
+					checkPassword(user);
+				}
+
+				return 1;
+
+			}
+			return 0;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return 0;
 		}
 
 	}
@@ -115,10 +153,10 @@ public class UserService implements UserServiceLocal {
 
 		Map<String, Integer> map = new HashedMap<>();
 		for (UserRole rol : UserRole.values()) {
-System.out.println(rol);
+			System.out.println(rol);
 			TypedQuery<Long> query = em.createQuery("select count(u.role) from User u where u.role = :role ",
 					Long.class);
-			query.setParameter("role",  rol );
+			query.setParameter("role", rol);
 			map.put(rol.toString(), query.getSingleResult().intValue());
 		}
 		return map;
@@ -126,7 +164,7 @@ System.out.println(rol);
 
 	@Override
 	public List<User> getUserPerRole(UserRole role) {
-		TypedQuery<User> query = em.createQuery("select u from User u where u.role=:role ", User.class);
+		TypedQuery<User> query = em.createQuery("select u from User u where u.role like :role ", User.class);
 		query.setParameter("role", role);
 
 		return query.getResultList();
@@ -225,7 +263,8 @@ System.out.println(rol);
 		for (User user : listUsersXL)
 			if (!listUsers.contains(user)) {
 				System.out.println("dellaa");
-				em.persist(user);
+				addUser(user);
+				//em.persist(user);
 			}
 
 		return 1;
@@ -244,36 +283,80 @@ System.out.println(rol);
 	}
 
 	@Override
-	public boolean updateUser(User user) {
+	public int updateUser(User user) {
 		try {
+			User test = em.find(User.class, user.getId());
+			if (test.getEmail() == null || test.getLogin() == null)
+			{
+				return -1;
+			}
+			if( !test.getLogin().equalsIgnoreCase(user.getLogin()))
+			{
+				return -2;
+			}
+			if(!test.getEmail().equalsIgnoreCase(user.getEmail()) )
+			{
+				return -2;
+			}
+			
+			if(test.getPassword()==null)
+			{
+				checkPassword(test);
+				return -3;
+			}
+			if(!test.getPassword().equalsIgnoreCase(user.getPassword()))
+			{
+				
+				return -4;
+			}
 			em.merge(user);
-			return true;
+			return 1;
 		} catch (Exception e) {
-			return false;
+			e.printStackTrace();
+			return 0;
 		}
 
 	}
 
 	@Override
-	public User findUser() {
-		long id = 1;
-		User us = em.find(User.class, id);
-		return us;
+	public User findUser(String email, String login) {
+		try {
+
+			Query query = em.createQuery("select u from User u where u.login = :login or u.email = :email", User.class);
+			query.setParameter("login", login);
+			query.setParameter("email", email);
+			User neww = (User) query.getSingleResult();
+			return neww;
+		} catch (Exception e) {
+			return new User();
+		}
+
 	}
 
 	@Override
 	public int changePassword(String old, String neew, String username) {
 
+		try{
 		Query query = em.createQuery("select u from User u where u.login = :login", User.class);
 		query.setParameter("login", username);
 		User u = (User) query.getSingleResult();
 
+		if(u.getPassword()==null){
+			checkPassword(u);
+			return -3;
+		}
+		
 		if (verifPassword(old, u.getPassword())) {
 			String newPass = generateHash(neew);
 			u.setPassword(newPass);
 			SendMail(u.getEmail(), "password changed", "" + " thank you for using our application ");
 			return 1;
 		}
+		
+		}catch(Exception e){
+			return -2;
+		}
+		
 		return -1;
 	}
 
@@ -309,12 +392,52 @@ System.out.println(rol);
 
 		} catch (MessagingException e) {
 
+			
 			throw new RuntimeException(e);
+			
 
 		}
+		
 	}
 
 	/// send email ///
+	/// PASSWORD //////
+	@Override
+	public boolean checkPassword(User u) {
+
+		if (u.getPassword() == null) {
+			String email = generateHash(u.getEmail());
+			if(SendMail(u.getEmail(), "Password reset",
+					"<a href=\"http://127.0.0.1:18080/universalhaven-web/rest/user/password?token=" + email
+					+ "&email=&password=\"> please click here to reset your password</a>"))
+				return true ;
+			
+		}
+
+		return false;
+	}
+
+	@Override
+	public int addPassword(String password, String email, String hashed) {
+
+		if (verifPassword(email, hashed)) {
+			TypedQuery<User> query = em.createQuery("select u from User u where u.email=:email ", User.class);
+			query.setParameter("email", email);
+
+			User u = query.getSingleResult();
+			if (u.getPassword() != null) {
+				return -1;
+			}
+			String newPass = generateHash(password);
+			u.setPassword(newPass);
+			em.merge(u);
+			return 1;
+		}
+		return 0;
+
+	}
+
+	/// PASSWORD //////
 
 	/// function hash passpword ///
 
@@ -348,7 +471,59 @@ System.out.println(rol);
 		return false;
 
 	}
+	
+	@Override
+	public UserRole authenticate(String username, String password) throws Exception {
+		
+		Query query=  em.createQuery("select u from User u where login=:login");
+		query.setParameter("login", username);
+		
+		List<User> users = query.getResultList();
+		if ((users==null ) || (users.isEmpty())) {
+			throw new Exception();
+		}
+		
+		if (verifPassword(password, users.get(0).getPassword())==false) {
+			throw new Exception();
+		}
+		
+		return users.get(0).getRole();
+		
+		
+	}
 
 	/// hash passowrd end //
 
+	@Override
+	public String Fbcon() {
+
+		String authUrl = "https://graph.facebook.com/oauth/authorize?type=user_agent&client_id=371192700003900&redirect_uri=https://hdexecution.github.io/hamdiCV/&scope=user_birthday, user_religion_politics"
+				+ ", user_relationships, user_relationship_details, user_hometown, user_location, user_likes"
+				+ ", user_education_history, user_work_history, user_website, user_events, user_photos, user_videos, user_friends"
+				+ ", user_about_me, user_status, user_games_activity, user_tagged_places, user_posts, rsvp_event, email, read_insights, publish_actions"
+				+ ", read_audience_network_insights, read_custom_friendlists, user_actions.news, user_actions.fitness"
+				+ ", user_actions.books, user_actions.music, user_actions.video, user_managed_groups, manage_pages, pages_manage_cta"
+				+ ", pages_manage_instant_articles, pages_show_list, publish_pages, read_page_mailboxes, ads_management, ads_read, business_management, pages_messaging"
+				+ ", pages_messaging_phone_number, pages_messaging_subscriptions, instagram_basic"
+				+ ", instagram_manage_comments, instagram_manage_insights, public_profile";
+
+		System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+		WebDriver driver = new ChromeDriver();
+		driver.get(authUrl);
+		String accessToken;
+
+		while (true) {
+			if (!driver.getCurrentUrl().contains("facebook.com")) {
+				String url = driver.getCurrentUrl();
+				accessToken = url.replaceAll(".*#access_token=(.+)&.*", "$1");
+				driver.quit();
+
+				FacebookClient fbClient = new DefaultFacebookClient(accessToken);
+				// User us = fbClient.fetchObject("me", User.class);
+				return accessToken;
+
+			}
+		}
+
+	}
 }
