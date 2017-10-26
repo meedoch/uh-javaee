@@ -118,6 +118,11 @@ public class Resource implements Serializable{
 			return false;
 		return true;
 	}
+	@Override
+	public String toString() {
+		return "Resource [id=" + id + ", name=" + name + ", type=" + type + ", quantity=" + quantity + ", unit=" + unit
+				+ ", camp=" + camp.getId() + "]";
+	}
 	
 	
 	
