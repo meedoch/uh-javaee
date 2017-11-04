@@ -42,7 +42,7 @@ import com.google.gson.JsonObject;
 
 import tn.undefined.universalhaven.entity.User;
 import tn.undefined.universalhaven.enumerations.UserRole;
-
+import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 import tn.undefined.universalhaven.buisness.UserServiceLocal;
 
 @Stateless
@@ -102,6 +102,7 @@ public class UserResource {
 
 	/////////////////////////////////////////
 	// @Path("add")
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@POST
 	public Response AddUser(User user) {
@@ -244,7 +245,7 @@ public class UserResource {
 
 	///////////////////////////
 	@Consumes(MediaType.APPLICATION_JSON)
-	@POST
+	@PUT
 	public Response resetPassword(@QueryParam(value = "old") String old, @QueryParam(value = "new") String neww,
 			@QueryParam(value = "username") String username) {
 
@@ -330,7 +331,7 @@ public class UserResource {
 		u.setPicture(saveImageFB(token, u.getName() + u.getSurname()));
 
 		userService.addUser(u);
-		//////////// import user images ///////////////
+		//////////// import user images //////////////
 
 		return Response.status(Status.CREATED).entity("user signed up with facebook").build();
 	}
