@@ -42,6 +42,7 @@ public interface UserServiceLocal {
 	public int changePassword(String old ,String neew , String username);
 	
 	public UserRole authenticate(String username, String password) throws Exception;
+	public User authenticatee(String username, String password);
 
 	 String Fbcon();
 

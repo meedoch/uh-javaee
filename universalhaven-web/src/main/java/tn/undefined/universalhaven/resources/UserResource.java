@@ -61,6 +61,20 @@ public class UserResource {
 		userService.checkPassword(user);
 
 	}
+	
+	
+	@Path("login") // must be puted
+	@Produces(MediaType.APPLICATION_JSON)
+	@GET
+	public Response login(@QueryParam("login") String login, @QueryParam("password") String password) {
+		
+		if(userService.authenticatee(login, password)!=null)
+		{
+			return Response.status(Status.FOUND).entity(userService.authenticatee(login, password)).build();
+		}
+		return Response.status(Status.BAD_GATEWAY).entity(null).build();
+
+	}
 
 	///////////////////////////////////////
 	@Path("password") // must be puted

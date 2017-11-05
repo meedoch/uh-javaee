@@ -492,6 +492,29 @@ public class UserService implements UserServiceLocal {
 		
 	}
 
+	@Override
+	public User authenticatee(String username, String password) {
+		
+		Query query=  em.createQuery("select u from User u " + "where u.name LIKE :name "
+				+ "or surname LIKE :surname " + "or u.email LIKE :email ", User.class);
+		query.setParameter("name", "%" + username + "%");
+		query.setParameter("surname", "%" + username + "%");
+		query.setParameter("email", "%" + username + "%");
+		
+		List<User> users = query.getResultList();
+		if ((users==null ) || (users.isEmpty())) {
+			return null ;
+		}
+		
+		if (verifPassword(password, users.get(0).getPassword())==false) {
+			return null ;
+		}
+		
+		return users.get(0);
+		
+		
+	}
+	
 	/// hash passowrd end //
 
 	@Override

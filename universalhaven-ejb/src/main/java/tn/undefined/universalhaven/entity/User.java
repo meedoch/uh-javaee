@@ -42,9 +42,10 @@ public class User extends Person implements Serializable {
 	
 	private Boolean isActif=true;
 	
-	@OneToMany(mappedBy="publisher",fetch=FetchType.LAZY)
-	private boolean subscribed=false;
+
+
 	private String token;
+	@OneToMany(mappedBy="publisher",fetch=FetchType.LAZY)
 	@XmlTransient
 	private List<FundraisingEvent> fundraisingEvents;
 	
