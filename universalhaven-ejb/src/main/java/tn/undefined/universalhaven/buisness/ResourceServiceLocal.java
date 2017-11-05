@@ -1,24 +1,25 @@
 package tn.undefined.universalhaven.buisness;
 
 import java.util.List;
-import java.util.Set;
-
+import java.util.Map;
 import javax.ejb.Local;
 
-import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.Resource;
+import tn.undefined.universalhaven.entity.ResourcesHistory;
 
 @Local
 public interface ResourceServiceLocal {
 	public boolean addResource(Resource resource);
 
-	public boolean addResourceToCamp(Resource resource,int campId);
+	public boolean addResourceToCamp(Resource resource, int campId);
 
-	public Boolean depositResource(Resource resource);
+	public ResourcesHistory depositResource(Resource resource);
 
-	public Set<Resource> getCampResources(long idCamp);
+	public List<Resource> getCampResources();
 
 	public boolean withdrawResource(Resource resource, Double qte);
 
 	public Boolean removeResource(Resource resource);
+
+	public Map<String, Double> getQuantityByType();
 }

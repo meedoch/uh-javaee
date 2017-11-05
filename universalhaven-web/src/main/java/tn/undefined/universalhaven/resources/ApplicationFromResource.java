@@ -96,6 +96,7 @@ public class ApplicationFromResource {
 ///////////////////////////
 	@Produces(MediaType.TEXT_PLAIN)
 	//@Path("reviewApplication")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@PUT
 	public Response reviewApplication(ApplicationForm application, @QueryParam(value = "review") boolean review,
 			@QueryParam(value = "revieww") long revieww) {
@@ -121,7 +122,9 @@ public class ApplicationFromResource {
 		int idApplication =0;
 		
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-		List<InputPart> inputParts = uploadForm.get("file");
+		
+		
+	//	List<InputPart> inputParts = uploadForm.get("file2");
 		List<InputPart> id = uploadForm.get("application");
 		
 		// recuperation du l id from form //
@@ -141,50 +144,20 @@ public class ApplicationFromResource {
 		}
 		// recuperation du l id from form //
 		
-		
-		for (InputPart inputPart : inputParts) {
-			MultivaluedMap<String, String> headers = inputPart.getHeaders();
-			try {
-				InputStream inputStream = inputPart.getBody(InputStream.class, null);
-				byte[] bytes = IOUtils.toByteArray(inputStream);
-				String filename = getFileName(headers);
-
-				// test for file format //
-
-				String extension = "";
-				int i = filename.lastIndexOf('.');
-				if (i >= 0) {
-					extension = filename.substring(i + 1);
-				}
-
-				if (!formatFile.contains(extension)) {
-					return Response.status(Status.NOT_ACCEPTABLE)
-							.entity("Format not supported  please use .jpeg .jpg .png  format").build();
-				}
-				// test for file format //
-
-				System.out.println(filename);
-				
-				String fileLocation = "C:\\Users\\HD-EXECUTION\\universalhaven-javaee\\universalhaven-web\\src\\main\\webapp\\assets\\"
-						+ UUID.randomUUID().toString() + filename;
-
-				FileOutputStream fileOuputStream = new FileOutputStream(fileLocation);
-				fileOuputStream.write(bytes);
-				int iu = applicationForm.addAttachment(idApplication, fileLocation);
-				if(iu==-1)
-				{
-					return Response.status(Status.NOT_ACCEPTABLE).entity("application does not exist ").build();
-
-				}
-				// saveFile(inputStream, fileLocation);
-				// TODO: HERE you do whatever you want to do with the file
-				// ...
-
-			} catch (IOException e) {
-				return Response.status(Status.NOT_ACCEPTABLE).entity("this aaplication does not exist ").build();
-
+		for (String key : uploadForm.keySet()){
+			if(!key.equalsIgnoreCase("application"))
+			{
+				List<InputPart> inputParts = uploadForm.get(key);
+				addImageh(inputParts,idApplication,formatFile);
 			}
+			
+			System.out.println(key);
 		}
+		
+		
+		
+		
+		
 		return Response.status(Status.OK).entity("Attachemnt added  ").build();
 		
 		
@@ -208,10 +181,61 @@ public class ApplicationFromResource {
 	
 	
 
+	//////////////////////////////
 	private String sanitizeFilename(String s) {
 		return s.trim().replaceAll("\"", "");
 	}
 	
+	
+	//////////////////////////////////
+	public boolean addImageh(List<InputPart> inputParts , int idApplication , List<String> formatFile)
+	{
+		for (InputPart inputPart : inputParts) {
+			MultivaluedMap<String, String> headers = inputPart.getHeaders();
+			try {
+				InputStream inputStream = inputPart.getBody(InputStream.class, null);
+				byte[] bytes = IOUtils.toByteArray(inputStream);
+				String filename = getFileName(headers);
+
+				// test for file format //
+
+				String extension = "";
+				int i = filename.lastIndexOf('.');
+				if (i >= 0) {
+					extension = filename.substring(i + 1);
+				}
+
+				if (!formatFile.contains(extension)) {
+					/*return Response.status(Status.NOT_ACCEPTABLE)
+							.entity("Format not supported  please use .jpeg .jpg .png  format").build();*/
+					return false ;
+				}
+				// test for file format //
+
+				System.out.println(filename);
+				
+				String fileLocation = "C:\\Users\\HD-EXECUTION\\universalhaven-javaee\\universalhaven-web\\src\\main\\webapp\\assets\\"
+						+ UUID.randomUUID().toString() + filename;
+
+				FileOutputStream fileOuputStream = new FileOutputStream(fileLocation);
+				fileOuputStream.write(bytes);
+				int iu = applicationForm.addAttachment(idApplication, fileLocation);
+				if(iu==-1)
+				{
+					//return Response.status(Status.NOT_ACCEPTABLE).entity("application does not exist ").build();
+					return false ;
+				}
+				// saveFile(inputStream, fileLocation);
+				// TODO: HERE you do whatever you want to do with the file
+				// ...
+
+			} catch (IOException e) {
+				//return Response.status(Status.NOT_ACCEPTABLE).entity("this aaplication does not exist ").build();
+					return false ;
+			}
+		}
+		return true ;
+	}
 	
 	
 		///////////////////////////////////

@@ -1,14 +1,19 @@
 package tn.undefined.universalhaven.buisness;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-
+import java.util.Map;
 import javax.ejb.Stateless;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.Resource;
+import tn.undefined.universalhaven.entity.ResourcesHistory;
+import tn.undefined.universalhaven.enumerations.ResourceHistoryType;
+import tn.undefined.universalhaven.enumerations.ResourceType;
 
 @Stateless
 public class ResourceService implements ResourceServiceLocal {
@@ -17,10 +22,13 @@ public class ResourceService implements ResourceServiceLocal {
 
 	@Override
 	public boolean addResource(Resource resource) {
+		if (resource.getQuantity() < 0) {
+			return false;
+		} else {
+			em.persist(resource);
+			return true;
+		}
 
-		em.persist(resource);
-
-		return true;
 	}
 
 	@Override
@@ -28,8 +36,12 @@ public class ResourceService implements ResourceServiceLocal {
 		try {
 			Camp camp = em.find(Camp.class, campId);
 			resource.setCamp(camp);
-			em.persist(resource);
-			return true;
+			if (resource.getQuantity() < 0) {
+				return false;
+			} else {
+				em.persist(resource);
+				return true;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -38,21 +50,42 @@ public class ResourceService implements ResourceServiceLocal {
 	}
 
 	@Override
-	public Boolean depositResource(Resource resource) {
+	public ResourcesHistory depositResource(Resource resource) {
 		try {
+			ResourcesHistory history = new ResourcesHistory();
+			Resource tmpRes = em.find(Resource.class, resource.getId());
+			history.setDate(new Date());
+			history.setResource(resource);
+			System.out.println("**** before " + tmpRes.getQuantity());
+			if (tmpRes.getQuantity() == resource.getQuantity()) {
+				return null;
+			}
+			if (resource.getQuantity() > tmpRes.getQuantity()) {
+				System.out.println("it is a deposit method");
+				history.setType(ResourceHistoryType.DEPOSIT);
+				history.setQuantity(resource.getQuantity() - tmpRes.getQuantity());
+
+			} else if (resource.getQuantity() < tmpRes.getQuantity()) {
+				System.out.println("it is a withdrawal method");
+				history.setType(ResourceHistoryType.WITHDRAWAL);
+				history.setQuantity(tmpRes.getQuantity() - resource.getQuantity());
+			}
 			em.merge(resource);
-			return true;
+
+			System.out.println("**** after " + resource.getQuantity());
+
+			return history;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 
 	}
 
 	@Override
-	public Set<Resource> getCampResources(long idCamp) {
-		Camp camp = em.find(Camp.class, idCamp);
-		return camp.getResources();
+	public List<Resource> getCampResources() {
+		return em.createQuery("SELECT r FROM Resource r").getResultList();
+
 	}
 
 	@Override
@@ -80,4 +113,16 @@ public class ResourceService implements ResourceServiceLocal {
 		}
 
 	}
+
+	@Override
+	public Map<String, Double> getQuantityByType() {
+		List<Object[]> query = em.createQuery("SELECT SUM(r.quantity), type FROM Resource r GROUP BY r.type")
+				.getResultList();
+		Map<String, Double> results = new HashMap<>();
+		for (Object[] row : query) {
+			results.put(((ResourceType) row[1]).toString(), (Double) row[0]);
+		}
+		return results;
+	}
+
 }

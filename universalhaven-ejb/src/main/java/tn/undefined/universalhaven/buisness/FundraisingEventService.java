@@ -17,6 +17,7 @@ import tn.undefined.universalhaven.dto.FundraisingEventDto;
 import tn.undefined.universalhaven.dto.UserDto;
 import tn.undefined.universalhaven.entity.FundraisingEvent;
 import tn.undefined.universalhaven.entity.User;
+import tn.undefined.universalhaven.enumerations.Urgency;
 @Stateless
 public class FundraisingEventService implements FundraisingEventServiceLocal,FundraisingEventServiceRemote {
 
@@ -175,9 +176,10 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 	}
 
 	@Override
-	public Map<String, Long> getCountEventByMonth() {
+	public Map<String, Long> getCountEventByMonth(int year) {
 		Query query = em.createQuery("SELECT MONTHNAME(f.publishDate),count(f.id),extract(month from f.publishDate )from FundraisingEvent f "
-		+ "WHERE extract(year from f.publishDate )=2017 GROUP BY MONTHNAME(f.publishDate),extract(month from f.publishDate ) ORDER by extract(month from f.publishDate ) ");
+		+ "WHERE extract(year from f.publishDate )=:year GROUP BY MONTHNAME(f.publishDate),extract(month from f.publishDate ) ORDER by extract(month from f.publishDate ) ");
+		query.setParameter("year", year);
 		List<Object[]> results = query.getResultList();
 		Map<String, Long> resultMap = new HashMap<>();
 		for (Object[] result : results) {
@@ -185,6 +187,61 @@ public class FundraisingEventService implements FundraisingEventServiceLocal,Fun
 			System.out.println("month: "+(String) result[0]+" number of event(s):  "+(Long) (result[1]));
 		}
 		return resultMap ;
+	}
+
+	@Override
+	public List<FundraisingEventDto> listEventsByState(String state) {
+		Query query=em
+				.createQuery("select f from FundraisingEvent f where f.state=:state");
+		query.setParameter("state", state);
+		List<FundraisingEvent> l=query.getResultList();
+		List<FundraisingEventDto> lDto=new ArrayList<FundraisingEventDto>();
+		for(FundraisingEvent f:l){
+			UserDto u=new UserDto(f.getPublisher().getId(),f.getPublisher().getLogin());
+			CampDto c=new CampDto(f.getCamp().getId(),f.getCamp().getAddress(),f.getCamp().getCountry());
+			lDto.add(new FundraisingEventDto(f.getId(),f.getTitle(),
+					f.getDescription(),f.getGoal(),f.getPublishDate(),
+					f.getUrgency(),f.getFinishingDate(),
+					f.getImagePath(),f.getState(),c,u));
+		}
+		return lDto;
+	}
+
+	@Override
+	public List<FundraisingEventDto> listEventsByUrgency(Urgency urgency) {
+		Query query=em
+				.createQuery("select f from FundraisingEvent f where f.urgency=:urgency");
+		query.setParameter("urgency", urgency);
+		List<FundraisingEvent> l=query.getResultList();
+		List<FundraisingEventDto> lDto=new ArrayList<FundraisingEventDto>();
+		for(FundraisingEvent f:l){
+			UserDto u=new UserDto(f.getPublisher().getId(),f.getPublisher().getLogin());
+			CampDto c=new CampDto(f.getCamp().getId(),f.getCamp().getAddress(),f.getCamp().getCountry());
+			lDto.add(new FundraisingEventDto(f.getId(),f.getTitle(),
+					f.getDescription(),f.getGoal(),f.getPublishDate(),
+					f.getUrgency(),f.getFinishingDate(),
+					f.getImagePath(),f.getState(),c,u));
+		}
+		return lDto;
+	}
+
+	@Override
+	public List<FundraisingEventDto> listEventsByYearAndMonth(int month,int year) {
+		Query query=em
+				.createQuery("select f from FundraisingEvent f where extract(year from f.publishDate )=:year and extract(month from f.publishDate )=:month");
+		query.setParameter("year", year);
+		query.setParameter("month", month);
+		List<FundraisingEvent> l=query.getResultList();
+		List<FundraisingEventDto> lDto=new ArrayList<FundraisingEventDto>();
+		for(FundraisingEvent f:l){
+			UserDto u=new UserDto(f.getPublisher().getId(),f.getPublisher().getLogin());
+			CampDto c=new CampDto(f.getCamp().getId(),f.getCamp().getAddress(),f.getCamp().getCountry());
+			lDto.add(new FundraisingEventDto(f.getId(),f.getTitle(),
+					f.getDescription(),f.getGoal(),f.getPublishDate(),
+					f.getUrgency(),f.getFinishingDate(),
+					f.getImagePath(),f.getState(),c,u));
+		}
+		return lDto;
 	}
 
 }

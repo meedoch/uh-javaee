@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -34,11 +36,11 @@ public class FundraisingEvent implements Serializable {
 	private String description;
 	
 	private double goal;
-	
+	@Temporal(TemporalType.DATE)
 	private Date publishDate= new Date();
 	@Enumerated(EnumType.STRING)
 	private Urgency urgency ;
-	
+	@Temporal(TemporalType.DATE)
 	private Date finishingDate= null;
 	
 	private String imagePath;

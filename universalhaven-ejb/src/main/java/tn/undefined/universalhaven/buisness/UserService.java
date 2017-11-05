@@ -363,8 +363,8 @@ public class UserService implements UserServiceLocal {
 	// function send mail //
 	public boolean SendMail(String to, String subject, String body) {
 
-		final String username = "tiestohd@gmail.com";
-		final String password = "bestdelloo1";
+		final String username = "kouertani270@gmail.com";
+		final String password = "Groovestreet2";
 
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");
