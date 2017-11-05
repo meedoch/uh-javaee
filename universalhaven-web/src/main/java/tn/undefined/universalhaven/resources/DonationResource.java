@@ -7,16 +7,20 @@ import java.util.Map;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import tn.undefined.universalhaven.buisness.DonationServiceLocal;
 import tn.undefined.universalhaven.buisness.FundraisingEventServiceLocal;
+import tn.undefined.universalhaven.buisness.PaypalServiceLocal;
 import tn.undefined.universalhaven.buisness.PaypalServiceRemote;
+import tn.undefined.universalhaven.buisness.StripeServiceLocal;
 import tn.undefined.universalhaven.buisness.StripeServiceRemote;
 import tn.undefined.universalhaven.entity.Donation;
 import tn.undefined.universalhaven.enumerations.UserRole;
@@ -28,16 +32,21 @@ import tn.undefined.universalhaven.util.DonationParam;
 public class DonationResource {
 
 	@EJB
-	PaypalServiceRemote servicePaypal;
+	PaypalServiceLocal servicePaypal;
 
 	@EJB
-	StripeServiceRemote serviceStripe;
+	StripeServiceLocal serviceStripe;
 
 	@EJB
 	DonationServiceLocal serviceDonation;
 	@EJB
 	FundraisingEventServiceLocal fundraisingEventService;
-
+	
+	
+	
+	
+	
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
@@ -62,7 +71,7 @@ public class DonationResource {
 				return ResponseUtil.buildOk("Paypal payment successful and donation persisted");
 
 			} else {
-				return ResponseUtil.buildError("Paypal payment failed");
+				return Response.status(Status.EXPECTATION_FAILED).entity("Paypal payment failed").build();
 			}
 		} else {
 			Double amountDouble = param.getDonation().getAmount();
@@ -76,7 +85,7 @@ public class DonationResource {
 					fundraisingEventService.changeEventState(param.getDonation().getFundraisingEvent());
 				return ResponseUtil.buildOk("Stripe payment successful and donation persisted");
 			}
-			return ResponseUtil.buildError("Stripe payment failed");
+			return Response.status(Status.EXPECTATION_FAILED).entity("Stripe payment failed").build();
 		}
 	}
 
