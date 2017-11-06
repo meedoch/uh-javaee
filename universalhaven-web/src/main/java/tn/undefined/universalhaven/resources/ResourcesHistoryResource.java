@@ -14,6 +14,8 @@ import javax.ws.rs.core.Response.Status;
 
 import tn.undefined.universalhaven.buisness.ResourcesHistoryServiceLocal;
 import tn.undefined.universalhaven.entity.ResourcesHistory;
+import tn.undefined.universalhaven.enumerations.UserRole;
+import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 
 @Path("resourcesHistory")
 @RequestScoped
@@ -22,16 +24,18 @@ public class ResourcesHistoryResource {
 	@EJB
 	private ResourcesHistoryServiceLocal resourcesHistoryServiceLocal;
 
-	/*@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response addResourcesResource(ResourcesHistory resHis) {
-		if (resourcesHistoryServiceLocal.addResourcesHistory(resHis))
-			return Response.status(Status.OK).build();
-		return Response.status(Status.NOT_ACCEPTABLE).build();
-	}
-	*/
+	/*
+	 * @POST
+	 * 
+	 * @Consumes(MediaType.APPLICATION_JSON) public Response
+	 * addResourcesResource(ResourcesHistory resHis) { if
+	 * (resourcesHistoryServiceLocal.addResourcesHistory(resHis)) return
+	 * Response.status(Status.OK).build(); return
+	 * Response.status(Status.NOT_ACCEPTABLE).build(); }
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.LOGISTICS_AND_REFUGEES_MANAGER)
 	public Response getListHistory() {
 		List<ResourcesHistory> list = resourcesHistoryServiceLocal.getResourcesHistory();
 		if (list.isEmpty())

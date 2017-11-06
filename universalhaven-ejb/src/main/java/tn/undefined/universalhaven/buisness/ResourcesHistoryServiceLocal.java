@@ -15,5 +15,6 @@ public interface ResourcesHistoryServiceLocal {
 	public Boolean addResourcesHistory(ResourcesHistory resourcesHistory, long userId);
 	public List<ResourcesHistory> getResourcesHistory();
 	public Map<String, Double> getDepositedResourcesHistory();
+	public Boolean removeResourcesHistory(ResourcesHistory resourcesHistory);
 	
 }

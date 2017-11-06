@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -22,6 +21,8 @@ import tn.undefined.universalhaven.buisness.ResourcesHistoryServiceLocal;
 import tn.undefined.universalhaven.buisness.UserServiceLocal;
 import tn.undefined.universalhaven.entity.Resource;
 import tn.undefined.universalhaven.entity.ResourcesHistory;
+import tn.undefined.universalhaven.enumerations.UserRole;
+import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 import tn.undefined.universalhaven.util.WithdrawParam;
 
 @Path("resource")
@@ -40,6 +41,7 @@ public class ResourcesResource {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.LOGISTICS_AND_REFUGEES_MANAGER)
 	public Response addResourcesResource(Resource resource) {
 		if (resourceServiceLocal.addResource(resource))
 			return Response.status(Status.ACCEPTED).entity("Resource added successfully").build();
@@ -48,6 +50,7 @@ public class ResourcesResource {
 
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.LOGISTICS_AND_REFUGEES_MANAGER)
 	public Response modifyResourcesResource(WithdrawParam params) {
 		Resource resource = params.getResource();
 
@@ -62,15 +65,18 @@ public class ResourcesResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.LOGISTICS_AND_REFUGEES_MANAGER)
 	public Response getCampResourcesResource() {
 		List<Resource> list = resourceServiceLocal.getCampResources();
 		if (list.isEmpty() == false)
 			return Response.ok(list).build();
 		return Response.status(Status.NO_CONTENT).entity("No Resources were found").build();
 	}
+
 	@GET
 	@Path("/qte")
 	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.LOGISTICS_AND_REFUGEES_MANAGER)
 	public Response getResourcesQuantityPerTypeResource() {
 		Map<String, Double> map = resourceServiceLocal.getQuantityByType();
 		if (map.isEmpty() == false)
@@ -79,6 +85,7 @@ public class ResourcesResource {
 	}
 
 	@DELETE
+	@JWTTokenNeeded(role = UserRole.LOGISTICS_AND_REFUGEES_MANAGER)
 	public Response removeReourcesResource(Resource resource) {
 		if (resourceServiceLocal.removeResource(resource))
 			return Response.status(Status.ACCEPTED).entity("Resource removed successfully").build();

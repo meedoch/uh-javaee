@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import tn.undefined.universalhaven.entity.CallForHelp;
 import tn.undefined.universalhaven.entity.ResourcesHistory;
 import tn.undefined.universalhaven.entity.User;
 
@@ -19,7 +20,7 @@ public class ResourcesHistoryService implements ResourcesHistoryServiceLocal {
 	public Boolean addResourcesHistory(ResourcesHistory resWithdrawalHistory, long userId) {
 		try {
 			User user = em.find(User.class, userId);
-			if (user==null){
+			if (user == null) {
 				throw new Exception();
 			}
 			resWithdrawalHistory.setUser(user);
@@ -40,6 +41,18 @@ public class ResourcesHistoryService implements ResourcesHistoryServiceLocal {
 	public Map<String, Double> getDepositedResourcesHistory() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Boolean removeResourcesHistory(ResourcesHistory resourcesHistory) {
+		try {
+			ResourcesHistory res = em.find(ResourcesHistory.class, resourcesHistory.getId());
+			em.remove(res);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

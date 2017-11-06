@@ -19,6 +19,8 @@ import javax.ws.rs.core.Response.Status;
 
 import tn.undefined.universalhaven.buisness.CallForHelpServiceLocal;
 import tn.undefined.universalhaven.entity.CallForHelp;
+import tn.undefined.universalhaven.enumerations.UserRole;
+import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 
 @Path("callforhelp")
 @RequestScoped
@@ -29,6 +31,7 @@ public class CallForHelpResource {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.CAMP_STAFF)
 	public Response addCallForHelpResource(CallForHelp callForHelp) {
 		if (callForHelpServiceLocal.startCallForHelp(callForHelp))
 			return Response.status(Status.ACCEPTED).entity("Call For Help Added").build();
@@ -37,6 +40,7 @@ public class CallForHelpResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.CAMP_STAFF)
 	public Response listActiveCallForHelpEventsResource() {
 		List<CallForHelp> list = callForHelpServiceLocal.listEvents();
 		if (list.isEmpty() == false)
@@ -49,6 +53,7 @@ public class CallForHelpResource {
 	@GET
 	@Path("active")
 	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.CAMP_STAFF)
 	public Response listCallForHelpEventsResource() {
 		List<CallForHelp> list = callForHelpServiceLocal.listActiveEvents();
 		if (list.isEmpty())
@@ -60,6 +65,7 @@ public class CallForHelpResource {
 	@GET
 	@Path("{title}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.CAMP_STAFF)
 	public Response getCallForHelpByNameResource(@PathParam("title") String title) {
 		List<CallForHelp> list = callForHelpServiceLocal.findCallForHelpByTitle(title);
 		if (list.isEmpty() == false)
@@ -70,6 +76,7 @@ public class CallForHelpResource {
 	@GET
 	@Path("description/{str}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.CAMP_STAFF)
 	public Response getCallForHelpByCriteriaResource(@PathParam("str") String description) {
 		List<CallForHelp> list = callForHelpServiceLocal.findCallForHelpByDescription(description);
 		if (list.isEmpty() == false)
@@ -79,6 +86,7 @@ public class CallForHelpResource {
 
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.CAMP_MANAGER)
 	public Response modifyCallForHelpResource(CallForHelp callForHelp) {
 		if (callForHelpServiceLocal.modifyCallForHelp(callForHelp))
 			return Response.status(Status.ACCEPTED).entity("Call For Help modified successfully").build();
@@ -86,6 +94,7 @@ public class CallForHelpResource {
 	}
 
 	@DELETE
+	@JWTTokenNeeded(role = UserRole.CAMP_MANAGER)
 	public Response removeCallForHelpResource(CallForHelp callForHelp) {
 		if (callForHelpServiceLocal.endCallForHelp(callForHelp))
 			return Response.status(Status.ACCEPTED).entity("Call For Help removed successfully").build();

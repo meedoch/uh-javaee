@@ -31,6 +31,7 @@ public class ResourceService implements ResourceServiceLocal {
 
 	}
 
+	// Unused Method
 	@Override
 	public boolean addResourceToCamp(Resource resource, int campId) {
 		try {
@@ -88,6 +89,7 @@ public class ResourceService implements ResourceServiceLocal {
 
 	}
 
+	// Unused Method
 	@Override
 	public boolean withdrawResource(Resource resource, Double qte) {
 		try {
@@ -105,6 +107,9 @@ public class ResourceService implements ResourceServiceLocal {
 	public Boolean removeResource(Resource resource) {
 		try {
 			Resource res = em.find(Resource.class, resource.getId());
+			Resource restmp = em.find(Resource.class, resource.getId());
+			em.createQuery("DELETE FROM ResourcesHistory ResHis WHERE ResHis.resource =:res ")
+					.setParameter("res", restmp).executeUpdate();
 			em.remove(res);
 			return true;
 		} catch (Exception e) {
