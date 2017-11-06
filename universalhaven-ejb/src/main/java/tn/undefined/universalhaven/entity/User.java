@@ -43,6 +43,7 @@ public class User extends Person implements Serializable {
 	private Boolean isActif=true;
 	
 	
+	
 	private String token;
 	@XmlTransient
 	@OneToMany(mappedBy="publisher",fetch=FetchType.LAZY)

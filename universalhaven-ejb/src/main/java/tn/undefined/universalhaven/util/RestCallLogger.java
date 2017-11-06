@@ -25,7 +25,7 @@ public class RestCallLogger implements RestCallLoggerInterface {
 	private Map<String, List<Date> > logs;
 	private Map<String,Date> blacklistedAddresses;
 	
-	private final static  int allowedcalls= 20;
+	private final static  int allowedcalls= 5000;
 	
 	private static FileLogger logger = null ;
 	

@@ -44,7 +44,7 @@ public class DonationService implements DonationServiceLocal,DonationServiceRemo
 		List<Object[]> results = query.getResultList();
 		Map<String, Double> resultMap = new HashMap<>();
 		for (Object[] result : results) {
-			resultMap.put((String) result[0], (Double) (result[1]));
+			resultMap.put((String) result[0], Double.valueOf(Math.round ((Double) (result[1]) )) ) ;
 		}
 		return resultMap;
 
@@ -58,7 +58,7 @@ public class DonationService implements DonationServiceLocal,DonationServiceRemo
 		query.setParameter("month", thisMonth);
 		Object result = query.getSingleResult();
 		if (result != null) {
-			return (Double) result;
+			return Math.round ((Double) result);
 		}
 		return 0;
 
@@ -72,7 +72,7 @@ public class DonationService implements DonationServiceLocal,DonationServiceRemo
 		query.setParameter("year", thisYear);
 		Object result = query.getSingleResult();
 		if (result != null) {
-			return (Double) result;
+			return Math.round ((Double) result);
 		}
 		return 0;
 	}
@@ -91,7 +91,7 @@ public class DonationService implements DonationServiceLocal,DonationServiceRemo
 
 		Object result = query.getSingleResult();
 		if (result != null) {
-			return (Double) result;
+			return Math.round ((Double) result);
 		}
 		return 0;
 	}
@@ -117,7 +117,7 @@ public class DonationService implements DonationServiceLocal,DonationServiceRemo
 
 			SimpleDateFormat formatter = new SimpleDateFormat("d/M/y");
 
-			resultMap.put(formatter.format(date), (Double) (result[3]));
+			resultMap.put(formatter.format(date), Double.valueOf(Math.round ((Double) (result[3]) )));
 		}
 		return resultMap;
 	}
@@ -129,7 +129,7 @@ public class DonationService implements DonationServiceLocal,DonationServiceRemo
 		Map<String, Double> resultMap = new HashMap<>();
 		for (Object[] result : results) {
 			if (result[0]!=null) {
-				resultMap.put((String) result[0], (Double) (result[1]));
+				resultMap.put((String) result[0], Double.valueOf(Math.round ((Double) (result[1]))));
 			}
 		}
 		return resultMap;
@@ -140,7 +140,7 @@ public class DonationService implements DonationServiceLocal,DonationServiceRemo
 		Query query= em.createQuery("SELECT AVG(d.amount) from Donation d");
 		Object result = query.getSingleResult();
 		if (result!=null) {
-			return (Double)result;
+			return  Double.valueOf(Math.round ((Double)result));
 		}
 		return 0d;
 	}
@@ -152,7 +152,7 @@ public class DonationService implements DonationServiceLocal,DonationServiceRemo
 		List<Object[]> results = query.getResultList();
 		Map<String, Double> resultMap = new HashMap<>();
 		for (Object[] result : results) {
-			resultMap.put((String) result[0], (Double) (result[1]));
+			resultMap.put((String) result[0], Double.valueOf(Math.round ((Double) (result[1]))));
 		}
 		return resultMap;
 
@@ -171,7 +171,7 @@ public class DonationService implements DonationServiceLocal,DonationServiceRemo
 		for (Object[] result : results) {
 			
 			String month = (String.valueOf((int) result[1])) +"/"+(String.valueOf((int) result[0]));
-			resultMap.put(month, (Double) (result[2]));
+			resultMap.put(month, Double.valueOf(Math.round ((Double) (result[2]))));
 		}
 		return resultMap;
 	}
