@@ -21,6 +21,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -64,10 +65,11 @@ public class UserResource {
 	
 	
 	@Path("login") // must be puted
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	@GET
-	public Response login(@QueryParam("login") String login, @QueryParam("password") String password) {
-		
+	@POST
+	public Response login(@FormParam("login") String login, @FormParam("password") String password) {
+		System.out.println("Login = "+login+" && password="+password);
 		if(userService.authenticatee(login, password)!=null)
 		{
 			return Response.status(Status.FOUND).entity(userService.authenticatee(login, password)).build();
