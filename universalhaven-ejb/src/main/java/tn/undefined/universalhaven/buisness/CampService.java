@@ -48,7 +48,7 @@ public class CampService implements CampServiceLocal, CampServiceRemote {
 		try {
 			Camp camp = em.find(Camp.class, campid);
 			camp.setClosingDate(new Date());
-			;
+			camp.setCreationDate(null);
 			em.merge(camp);
 			return true;
 		} catch (Exception e) {
@@ -94,19 +94,27 @@ public class CampService implements CampServiceLocal, CampServiceRemote {
 
 	@Override
 	public boolean updateCamp(Camp camp) {
+		Query req = em.createQuery("select c.campManager from Camp c where c.id = :idcamp");
+		req.setParameter("idcamp", camp.getId());
+		User idoldcm = (User) req.getSingleResult();
+		
+		System.out.println(idoldcm.getId());
 		Query query = em.createQuery("select count(u) from User u where id = :idcamp and role = 'CAMP_MANAGER'");
 		long useridcamp = camp.getCampManager().getId();
-		System.out.println(useridcamp);
+		System.out.println(useridcamp+"this is the one that im looking for");
 		query.setParameter("idcamp", useridcamp);
 		long idcamp = (Long) query.getSingleResult();
-
+		
 		try {
 			if (idcamp != 0) {
 
 				em.merge(camp);
 				User user = em.find(User.class, useridcamp);
+				User olduser = em.find(User.class, idoldcm.getId());
 				user.setAssignedCamp(camp);
+				olduser.setAssignedCamp(null);
 				em.merge(user);
+				em.merge(olduser);
 				return true;
 			} else {
 				return false;
@@ -117,4 +125,28 @@ public class CampService implements CampServiceLocal, CampServiceRemote {
 		}
 	}
 
+	@Override
+	public List<User> findCampManager() {
+		Query query = em.createQuery("select (u) from User u where assignedCamp = null and role = 'CAMP_MANAGER'");
+		return query.getResultList();
+	}
+	
+	public Camp  getCampById(long campid) {
+			Camp camp = em.find(Camp.class, campid);
+			return camp;
+	}
+
+	@Override
+	public boolean activateCamp(long campid) {
+		try {
+			Camp camp = em.find(Camp.class, campid);
+			camp.setClosingDate(null);
+			camp.setCreationDate(new Date());
+			em.merge(camp);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

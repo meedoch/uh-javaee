@@ -9,10 +9,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import tn.undefined.universalhaven.entity.Camp;
+import tn.undefined.universalhaven.entity.User;
 import tn.undefined.universalhaven.enumerations.UserRole;
 import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 import tn.undefined.universalhaven.buisness.CampServiceLocal;
@@ -42,7 +44,7 @@ public class CampResource {
 	@GET
 	@Path("/findbycountry")
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	//@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
 	public Response getallpercountry() {
 		Map<String, List<Camp>> camps;
 		camps = (serviceCamp.ListCampPerCountry());
@@ -52,7 +54,7 @@ public class CampResource {
 	@GET
 	@Path("/countcamps")
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	//@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
 	public Response countAllCampsPerCountry() {
 		Map<String, Long> camps;
 		camps = (serviceCamp.CountCampPerCountry());
@@ -74,7 +76,7 @@ public class CampResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
 	public Response create(Camp camp) {
-
+		System.out.println("ADding camp..");
 		if (serviceCamp.CreateCamp(camp)) {
 			return Response.status(Status.CREATED).entity("Camp added").build();
 		} else {
@@ -107,5 +109,40 @@ public class CampResource {
 		}
 
 	}
+	@GET
+	@Path("/findmanager")
+	@Produces(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response getCampMan() {
+		List<User> users = new ArrayList<>();
 
+		users.addAll(serviceCamp.findCampManager());
+		if (users.isEmpty()) {
+			return Response.status(Status.NO_CONTENT).build();
+		}
+		return Response.ok(users).build();
+	}
+	@GET
+	@Path("/findCampById")
+	@Produces(MediaType.APPLICATION_JSON)
+	//@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response findCampById(@QueryParam(value = "id") long campId) {
+		Camp camp = serviceCamp.getCampById(campId);
+		if (camp.getId()== 0) {
+			return Response.status(Status.NO_CONTENT).build();
+		}
+		return Response.ok(camp).build();
+	}
+	@PUT
+	@Path("/activatecamps")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response activateCamps(@FormParam(value = "id") long campId) {
+		if (serviceCamp.activateCamp(campId)) {
+			return Response.ok().entity("Camp modified").build();
+		} else {
+			return Response.status(Status.NOT_MODIFIED).entity("Camp no").build();
+		}
+
+	}
 }
