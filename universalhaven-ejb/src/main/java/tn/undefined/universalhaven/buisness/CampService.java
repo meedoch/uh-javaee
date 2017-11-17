@@ -10,6 +10,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import tn.undefined.universalhaven.entity.Camp;
+import tn.undefined.universalhaven.entity.Mail;
+import tn.undefined.universalhaven.entity.Refugee;
 import tn.undefined.universalhaven.entity.User;
 
 @Stateless
@@ -107,7 +109,6 @@ public class CampService implements CampServiceLocal, CampServiceRemote {
 		
 		try {
 			if (idcamp != 0) {
-
 				em.merge(camp);
 				User user = em.find(User.class, useridcamp);
 				User olduser = em.find(User.class, idoldcm.getId());
@@ -124,7 +125,6 @@ public class CampService implements CampServiceLocal, CampServiceRemote {
 			return false;
 		}
 	}
-
 	@Override
 	public List<User> findCampManager() {
 		Query query = em.createQuery("select (u) from User u where assignedCamp = null and role = 'CAMP_MANAGER'");
@@ -149,4 +149,39 @@ public class CampService implements CampServiceLocal, CampServiceRemote {
 			return false;
 		}
 	}
+
+	@Override
+	public long findcampid(long userid) {
+		Query query = em.createQuery("select u.assignedCamp from User u where u.id =:iduser");
+		query.setParameter("iduser", userid);
+		Camp idcamp = (Camp) query.getSingleResult();
+		return idcamp.getId();
+	}
+
+	@Override
+	public List<Refugee> findallrefugees() {
+		
+		TypedQuery<Refugee> query = em.createQuery("select r from Refugee r", Refugee.class);
+		return query.getResultList();
+	}
+
+	@Override
+	public boolean deleteRefugee(Refugee refu) {
+		  try {  
+			  Refugee refugee = em.find(Refugee.class, refu.getId());
+				em.remove(refugee);
+				return true; 
+		    } 
+		    catch (Exception e) { 
+		      e.printStackTrace(); 
+		      return false;  
+		    } 
+	}
+
+	@Override
+	public Refugee getRefugeeById(long refugeeid) {
+		Refugee ref = em.find(Refugee.class, refugeeid);
+		return ref;
+	}
+	
 }

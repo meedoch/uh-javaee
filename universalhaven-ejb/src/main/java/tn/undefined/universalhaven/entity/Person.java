@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -28,6 +30,8 @@ public class Person implements Serializable{
 	
 	private String surname;
 	
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date birthDate;
 	
 	private String country;
@@ -73,8 +77,8 @@ public class Person implements Serializable{
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
-	public Date getBirthDate() {
-		return birthDate;
+	public long getBirthDate() {
+		return birthDate.getTime();
 	}
 	public void setBirthDate(Date birthDate) {
 		this.birthDate = birthDate;
