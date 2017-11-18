@@ -13,6 +13,7 @@ import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.entity.Mail;
 import tn.undefined.universalhaven.entity.Refugee;
 import tn.undefined.universalhaven.entity.User;
+import tn.undefined.universalhaven.enumerations.UserRole;
 
 @Stateless
 public class CampService implements CampServiceLocal, CampServiceRemote {
@@ -184,4 +185,25 @@ public class CampService implements CampServiceLocal, CampServiceRemote {
 		return ref;
 	}
 	
+	@Override
+	public Camp getCampByUser(long userid) {
+		User user = em.find(User.class, userid);
+		if ( user.getRole().equals(UserRole.CAMP_MANAGER) ) {
+			return user.getManagedCamp();
+		}
+		else {
+			return user.getAssignedCamp();
+		}
+		
+	}
+
+	@Override
+	public List<User> getCampStaff(long campid) {
+		User user = new User();
+		Camp c = em.find(Camp.class, campid);
+		Query q = em.createQuery("SELECT u from User u where u.assignedCamp=:camp or u.managedCamp=:camp");
+		q.setParameter("camp", c);
+		return q.getResultList();
+	}
+
 }

@@ -21,6 +21,8 @@ import tn.undefined.universalhaven.entity.User;
 import tn.undefined.universalhaven.enumerations.UserRole;
 import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 import tn.undefined.universalhaven.buisness.CampServiceLocal;
+import tn.undefined.universalhaven.buisness.UserServiceLocal;
+
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -125,6 +127,22 @@ public class CampResource {
 			return Response.status(Status.NOT_MODIFIED).entity("Camp Not edited").build();
 		}
 	}
+	
+	@GET
+	@Path("campbyuser")
+	public Response getCampPerUser(@QueryParam(value="userid") long userid) {
+		
+		return Response.ok(serviceCamp.getCampByUser(userid).getId()).build();
+		
+	}
+	
+	@GET
+	@Path("campstaff")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCampStaff(@QueryParam(value="campid") long campid) {
+		return Response.ok(serviceCamp.getCampStaff(campid)).build();
+	}
+
 	@GET
 	@Path("/findmanager")
 	@Produces(MediaType.APPLICATION_JSON)

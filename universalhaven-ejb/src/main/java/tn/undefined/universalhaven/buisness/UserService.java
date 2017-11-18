@@ -546,4 +546,9 @@ public class UserService implements UserServiceLocal {
 		}
 
 	}
+
+	@Override
+	public List<User> getAllUsers() {
+		return em.createQuery("SELECT u from User u").getResultList();
+	}
 }

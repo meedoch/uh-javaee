@@ -23,4 +23,6 @@ public interface CampServiceLocal {
   public long findcampid(long userid);
   public List<Refugee> findallrefugees();
   public boolean deleteRefugee(Refugee refu);
+  public Camp getCampByUser(long userid);
+  public List<User> getCampStaff( long campid);
 } 
