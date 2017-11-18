@@ -5,7 +5,8 @@ import java.util.Map;
 
 import javax.ejb.Local; 
  
-import tn.undefined.universalhaven.entity.Camp; 
+import tn.undefined.universalhaven.entity.Camp;
+import tn.undefined.universalhaven.entity.User; 
 @Local 
 public interface CampServiceLocal { 
   public boolean CreateCamp(Camp camp); 
@@ -14,4 +15,6 @@ public interface CampServiceLocal {
   public Map<String,List<Camp>> ListCampPerCountry(); 
   public Map<String,Long> CountCampPerCountry();
   public boolean updateCamp(Camp camp); 
+  public Camp getCampByUser(long userid);
+  public List<User> getCampStaff( long campid);
 } 

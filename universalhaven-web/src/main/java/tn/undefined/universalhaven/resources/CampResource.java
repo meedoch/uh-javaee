@@ -9,6 +9,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -16,6 +17,8 @@ import tn.undefined.universalhaven.entity.Camp;
 import tn.undefined.universalhaven.enumerations.UserRole;
 import tn.undefined.universalhaven.jwt.JWTTokenNeeded;
 import tn.undefined.universalhaven.buisness.CampServiceLocal;
+import tn.undefined.universalhaven.buisness.UserServiceLocal;
+
 import java.util.*;
 
 @Path("camp")
@@ -24,7 +27,11 @@ public class CampResource {
 
 	@EJB
 	CampServiceLocal serviceCamp;
-
+	
+	
+	
+	
+	
 	@GET
 	@Path("/findallcamps")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -106,6 +113,21 @@ public class CampResource {
 			return Response.status(Status.NOT_MODIFIED).entity("Camp Not edited").build();
 		}
 
+	}
+	
+	@GET
+	@Path("campbyuser")
+	public Response getCampPerUser(@QueryParam(value="userid") long userid) {
+		
+		return Response.ok(serviceCamp.getCampByUser(userid).getId()).build();
+		
+	}
+	
+	@GET
+	@Path("campstaff")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCampStaff(@QueryParam(value="campid") long campid) {
+		return Response.ok(serviceCamp.getCampStaff(campid)).build();
 	}
 
 }

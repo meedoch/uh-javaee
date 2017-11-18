@@ -1,6 +1,7 @@
 package tn.undefined.universalhaven.resources;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +50,6 @@ public class DonationResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
 	public Collection<Donation> getAll() {
 		return serviceDonation.getAll();
 	}
@@ -57,6 +57,7 @@ public class DonationResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response donate(DonationParam param) {
+		param.getDonation().setDonationDate(new Date());
 		if (param.getMethod().equals("paypal")) {
 			System.out.println(String.valueOf(param.getDonation().getAmount()));
 			String reference = servicePaypal.pay(String.valueOf(param.getDonation().getAmount()), param.getCreditCardType()

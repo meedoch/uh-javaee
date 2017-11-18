@@ -49,5 +49,7 @@ public interface UserServiceLocal {
 	boolean checkPassword(User u);
 
 	int addPassword( String password,String email,String hashed);
-
+	
+	
+	public List<User> getAllUsers();
 }
