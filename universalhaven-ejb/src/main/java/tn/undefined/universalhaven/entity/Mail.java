@@ -18,7 +18,7 @@ public class Mail implements Serializable{
 	private long id;
 	private String subject;
 	private String content;
-	private String Mailsender;
+	private String mailSender;
 	public long getId() {
 		return id;
 	}
@@ -37,12 +37,13 @@ public class Mail implements Serializable{
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getMailsender() {
-		return Mailsender;
+	public String getMailSender() {
+		return mailSender;
 	}
-	public void setMailsender(String mailsender) {
-		Mailsender = mailsender;
+	public void setMailSender(String mailSender) {
+		this.mailSender = mailSender;
 	}
+	
 
 
 	

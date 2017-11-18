@@ -46,6 +46,7 @@ public class MailResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response SendMail(Mail mail) {
+		System.out.println(mail.getMailSender());
 		if (serviceMail.contacterNous(mail)) {
 			return Response.status(Status.CREATED).entity("Mail sendet").build();
 		} else {
@@ -103,17 +104,63 @@ public class MailResource {
 			return Response.status(Status.NOT_ACCEPTABLE).entity("Problem of sending the NewsLetter").build();
 		}
 	}
+	@POST
+	@Path("/sendmailto")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
+	public Response sendMailto(Mail mail) {
+		try {
+			
+			
+			String host = "smtp.gmail.com";
+			String user = "he.flach.smok.c4@gmail.com";
+			String to = mail.getMailSender();
+			String from = "he.flach.smok.c4@gmail.com";
+			String subject = mail.getSubject();
+			String messageText = mail.getContent();
+			boolean sessionDebug = false;
+			Properties props = System.getProperties();
+			props.put("mail.smtp.starttls.enable", "true");
+			props.put("mail.smtp.host", host);
+			props.put("mail.smtp.port", "587");
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.starttls.required", "true");
+			Session mailSession = Session.getDefaultInstance(props, null);
+			mailSession.setDebug(sessionDebug);
+			Message msg = new MimeMessage(mailSession);
+			msg.setFrom(new InternetAddress(from));
+			InternetAddress[] address = {new InternetAddress(to)};
+			
+			msg.setRecipients(Message.RecipientType.TO, address);
+			msg.setSubject(subject);
+			msg.setSentDate(new Date());
+			msg.setText(messageText);
+			Transport transport = mailSession.getTransport("smtp");
+			transport.connect(host, user, pass);
+			transport.sendMessage(msg, msg.getAllRecipients());
+			transport.close();
+			System.out.println("NewsLetter sended successfully");
+			return Response.status(Status.ACCEPTED).entity("NewsLetter sended successfully").build();
+		} catch (Exception ex) {
+			System.out.println(ex);
+			return Response.status(Status.NOT_ACCEPTABLE).entity("Problem of sending the NewsLetter").build();
+		}
+	}
 
 	@POST
 	@Path("/newsletter")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@JWTTokenNeeded(role = UserRole.ICRC_MANAGER)
 	public Response SendNewsLetter(Mail mail) {
+		if ( (mail.getContent()==null) || (mail.getContent().equals("")) ){
+			return Response.status(Status.NOT_ACCEPTABLE).entity("Problem of sending the NewsLetter").build();
+		}
 		try {
 			String host = "smtp.gmail.com";
 			String user = "he.flach.smok.c4@gmail.com";
-			String pass = "mo********";
 			String to = serviceMail.getSubscribedUsers();
+			to = to+mail.getMailSender();
+			to = to.substring(0, to.length() - 1);
 			String from = "he.flach.smok.c4@gmail.com";
 			String subject = mail.getSubject();
 			String messageText = mail.getContent();
@@ -137,8 +184,8 @@ public class MailResource {
 			}
 			msg.setRecipients(Message.RecipientType.TO, address);
 			msg.setSubject(subject);
+	          msg.setContent(messageText, "text/html; charset=utf-8");
 			msg.setSentDate(new Date());
-			msg.setText(messageText);
 
 			Transport transport = mailSession.getTransport("smtp");
 			transport.connect(host, user, pass);

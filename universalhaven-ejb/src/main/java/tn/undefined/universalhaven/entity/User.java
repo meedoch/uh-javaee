@@ -113,8 +113,8 @@ public class User extends Person implements Serializable {
 		this.password = password;
 	}
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
+	public long getSubscriptionDate() {
+		return subscriptionDate.getTime();
 	}
 
 	public void setSubscriptionDate(Date subscriptionDate) {
