@@ -114,6 +114,7 @@ public class MailResource {
 			
 			String host = "smtp.gmail.com";
 			String user = "he.flach.smok.c4@gmail.com";
+			String pass = "mo*******";
 			String to = mail.getMailSender();
 			String from = "he.flach.smok.c4@gmail.com";
 			String subject = mail.getSubject();
@@ -158,6 +159,7 @@ public class MailResource {
 		try {
 			String host = "smtp.gmail.com";
 			String user = "he.flach.smok.c4@gmail.com";
+			String pass = "mo****";
 			String to = serviceMail.getSubscribedUsers();
 			to = to+mail.getMailSender();
 			to = to.substring(0, to.length() - 1);
