@@ -49,30 +49,21 @@ public class User extends Person implements Serializable {
 	@OneToMany(mappedBy="publisher",fetch=FetchType.LAZY)
 	private List<FundraisingEvent> fundraisingEvents;
 	
-	// Tasks li lezem ya3melhom
-	@XmlTransient
-	@OneToMany(mappedBy="taskExecutor")
-	
-	private List<Task> tasksToDo;
 	
 	
-	// Tasks li 3tahom 
-	@OneToMany(mappedBy="taskAssigner")
-	private List<Task> assignedTasks;
 	
-	@OneToOne(mappedBy="campManager")
+	@OneToOne(mappedBy="campManager",fetch=FetchType.EAGER)
 	@XmlTransient
 	private Camp managedCamp;
 	
-	@ManyToOne()
+	@ManyToOne(fetch=FetchType.EAGER)
 	@XmlTransient
 	private Camp assignedCamp;
 
 	public User() {
 		super();
 		fundraisingEvents = new ArrayList<>();
-		tasksToDo = new ArrayList<>();
-		assignedTasks = new ArrayList<>();
+		
 	}
 	
 	
@@ -122,8 +113,8 @@ public class User extends Person implements Serializable {
 		this.password = password;
 	}
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
+	public long getSubscriptionDate() {
+		return subscriptionDate.getTime();
 	}
 
 	public void setSubscriptionDate(Date subscriptionDate) {
@@ -197,22 +188,7 @@ public class User extends Person implements Serializable {
 	public void setFundraisingEvents(List<FundraisingEvent> fundraisingEvents) {
 		this.fundraisingEvents = fundraisingEvents;
 	}
-	@XmlTransient
-	public List<Task> getTasksToDo() {
-		return tasksToDo;
-	}
-
-	public void setTasksToDo(List<Task> tasksToDo) {
-		this.tasksToDo = tasksToDo;
-	}
-	@XmlTransient
-	public List<Task> getAssignedTasks() {
-		return assignedTasks;
-	}
-
-	public void setAssignedTasks(List<Task> assignedTasks) {
-		this.assignedTasks = assignedTasks;
-	}
+	
 	@XmlTransient
 	public Camp getManagedCamp() {
 		return managedCamp;

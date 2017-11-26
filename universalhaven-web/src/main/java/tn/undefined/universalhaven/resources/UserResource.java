@@ -28,11 +28,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.apache.commons.io.IOUtils;
+import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.primefaces.json.JSONArray;
@@ -70,10 +72,16 @@ public class UserResource {
 	@POST
 	public Response login(@FormParam("login") String login, @FormParam("password") String password) {
 		System.out.println("Login = "+login+" && password="+password);
+		
 		if(userService.authenticatee(login, password)!=null)
 		{
+			User user= userService.authenticatee(login, password);
+			String token = new JWTTokenIssuer().issueToken(login, user.getRole());
 			
-			return Response.status(Status.FOUND).entity(userService.authenticatee(login, password)).build();
+			return Response.status(Status.OK).entity(userService.authenticatee(login, password))
+					.header("Authorization", token)
+					.build();
+			
 		}
 		return Response.status(Status.BAD_GATEWAY).entity(null).build();
 
@@ -193,7 +201,7 @@ public class UserResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Response getUserPerRole(@QueryParam(value = "role") UserRole role) {
-
+		
 		return Response.status(Status.OK).entity(userService.getUserPerRole(role)).build();
 	}
 
@@ -413,6 +421,13 @@ public class UserResource {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@GET
+	@Path("all")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllUsers() {
+		return Response.ok(userService.getAllUsers()).build();
 	}
 
 

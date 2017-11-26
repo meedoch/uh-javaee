@@ -56,7 +56,7 @@ public class JWTTokenIssuer {
 	    
 	   
 	    
-	    private String issueToken(String login,UserRole role) {
+	    public String issueToken(String login,UserRole role) {
 	        Key key = keyGenerator.generateKey();
 	        Calendar c =Calendar.getInstance();
 	        c.add(Calendar.MINUTE, 15);

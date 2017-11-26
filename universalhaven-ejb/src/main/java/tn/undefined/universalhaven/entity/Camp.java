@@ -80,9 +80,7 @@ public class Camp implements Serializable{
 	@OneToMany(mappedBy = "camp", fetch = FetchType.EAGER)
 	@JsonManagedReference("callforhelp-camp")
 	private Set<CallForHelp> callForHelpEvents;
-	@XmlTransient
-	@OneToMany(mappedBy="camp")
-	private List<Task> campTasks;
+	
 	@XmlTransient
 	@OneToMany(mappedBy="camp", fetch = FetchType.LAZY)
 	private List<FundraisingEvent> fundraisingEvents;
@@ -221,13 +219,7 @@ public class Camp implements Serializable{
 	public void setCallForHelpEvents(Set<CallForHelp> callForHelpEvents) {
 		this.callForHelpEvents = callForHelpEvents;
 	}
-	@XmlTransient
-	public List<Task> getCampTasks() {
-		return campTasks;
-	}
-	public void setCampTasks(List<Task> campTasks) {
-		this.campTasks = campTasks;
-	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
