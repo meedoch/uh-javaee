@@ -15,7 +15,7 @@ public interface ApplicationFormServiceLocal {
 	public List<ApplicationForm> listApplication();
 	public List<ApplicationForm> listApplicationPerCountry(String country);
 	public List<ApplicationForm> listApplicationPerGender(String gender);
-	public int reviewApplication(ApplicationForm application , boolean review , long revieww );
+	public long reviewApplication(ApplicationForm application , boolean review , long revieww );
 	public int addAttachment(int application , String name );
 	
 }

@@ -72,6 +72,7 @@ public class UserResource {
 		System.out.println("Login = "+login+" && password="+password);
 		if(userService.authenticatee(login, password)!=null)
 		{
+			
 			return Response.status(Status.FOUND).entity(userService.authenticatee(login, password)).build();
 		}
 		return Response.status(Status.BAD_GATEWAY).entity(null).build();
@@ -412,6 +413,33 @@ public class UserResource {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+
+	@GET
+	@Path("/campstaff")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCampStaff(@QueryParam(value="campid") long campId){
+		return Response.ok(userService.getCampStaff(campId)).build();
+	}
+	
+	
+	@POST
+	@Path("affect")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response assignStaff(List<Integer> values,@QueryParam(value="campid") long campid){
+		for (Integer value: values){
+			userService.affect(value, campid);
+		}
+		return Response.ok("Success").build();
+	}
+	
+	@POST
+	@Path("removeFromCamp")
+	
+	public Response removeFromCamp(@QueryParam(value="userid") long userid){
+		userService.removeFromCamp(userid);
+		return Response.ok("Success").build();
 	}
 
 }

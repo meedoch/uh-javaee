@@ -41,7 +41,7 @@ public class ApplicationFromResource {
 	
 /////////////////////
 	@POST
-	@Produces(MediaType.TEXT_PLAIN)
+	//@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response apply(ApplicationForm app) {
 		int test = applicationForm.apply(app) ;
@@ -100,9 +100,13 @@ public class ApplicationFromResource {
 	@PUT
 	public Response reviewApplication(ApplicationForm application, @QueryParam(value = "review") boolean review,
 			@QueryParam(value = "revieww") long revieww) {
-		if (applicationForm.reviewApplication(application, review, revieww) == 1)
-			return Response.status(Status.ACCEPTED).entity("Application accepted  and user added").build();
-		return Response.status(Status.FORBIDDEN).entity("only ICRC manger can handle this").build();
+
+	
+		long res = applicationForm.reviewApplication(application, review, revieww);
+		if (res != -1)
+			return Response.status(Status.ACCEPTED).entity(res).build();
+		return Response.status(Status.FORBIDDEN).entity("error,only ICRC manger can handle this").build();
+
 
 	}
 	
@@ -113,8 +117,9 @@ public class ApplicationFromResource {
 	//@Path("{applicationform}")
 	@POST
 	@Consumes("multipart/form-data")
-	@Produces(MediaType.TEXT_PLAIN)
+	//@Produces(MediaType.TEXT_PLAIN)
 	public Response addAttachment(MultipartFormDataInput input) {
+		
 		List<String> formatFile = new ArrayList<String>();
 		formatFile.add("jpeg");
 		formatFile.add("jpg");
@@ -213,13 +218,13 @@ public class ApplicationFromResource {
 				// test for file format //
 
 				System.out.println(filename);
-				
-				String fileLocation = "C:\\Users\\HD-EXECUTION\\universalhaven-javaee\\universalhaven-web\\src\\main\\webapp\\assets\\"
-						+ UUID.randomUUID().toString() + filename;
+				String temp =  UUID.randomUUID().toString() + filename ;
+				String fileLocation = "E:\\hamdi\\D\\Hamdi\\etude\\4Twin\\pi\\dotNet\\universalhaven-dotnet\\Web\\Content\\Images\\attachments\\"
+						+ temp;
 
 				FileOutputStream fileOuputStream = new FileOutputStream(fileLocation);
 				fileOuputStream.write(bytes);
-				int iu = applicationForm.addAttachment(idApplication, fileLocation);
+				int iu = applicationForm.addAttachment(idApplication, temp);
 				if(iu==-1)
 				{
 					//return Response.status(Status.NOT_ACCEPTABLE).entity("application does not exist ").build();

@@ -1,5 +1,6 @@
 package tn.undefined.universalhaven.buisness;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,11 +70,12 @@ public class ApplicationFormService implements ApplicationFormServiceLocal {
 	}
 
 	@Override
-	public int reviewApplication(ApplicationForm application, boolean review, long revieww) {
+	public long reviewApplication(ApplicationForm application, boolean review, long revieww) {
 
 		User u = em.find(User.class, revieww);
 		System.out.println(u.getRole());
-
+		String tmp = String.valueOf(application.getId());
+		application = em.find(ApplicationForm.class, Integer.parseInt(tmp));
 		if (u.getRole().compareTo(UserRole.ICRC_MANAGER) == 0) {
 			application.setReviewer(u);
 			application.setAccepted(review);
@@ -82,6 +84,7 @@ public class ApplicationFormService implements ApplicationFormServiceLocal {
 
 			User newUser = new User();
 			newUser.setName(application.getName());
+			newUser.setBirthDate(new Date());
 			newUser.setEmail(application.getEmail());
 			newUser.setSkills(application.getSkills());
 			newUser.setGender(application.getGender());
@@ -92,7 +95,7 @@ public class ApplicationFormService implements ApplicationFormServiceLocal {
 			newUser.setLogin(application.getName() + parts[0].trim());
 
 			userService.addUser(newUser);
-			return 1;
+			return newUser.getId();
 
 		}
 

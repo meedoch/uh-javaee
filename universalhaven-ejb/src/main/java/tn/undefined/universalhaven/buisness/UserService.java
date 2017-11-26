@@ -546,4 +546,30 @@ public class UserService implements UserServiceLocal {
 		}
 
 	}
+
+	public List<User> getCampStaff(long campid){
+		Camp c = em.find(Camp.class, campid);
+		Query q = em.createQuery("SELECT u from User u where u.role=:role and u.assignedCamp=:camp");
+		q.setParameter("role", UserRole.CAMP_STAFF);
+		q.setParameter("camp", c);
+		return q.getResultList();
+	}
+
+	@Override
+	public void affect(long userid, long campid) {
+		
+		User u = em.find(User.class, userid);
+		Camp c = em.find(Camp.class, campid);
+		u.setAssignedCamp(c);
+		u.setRole(UserRole.CAMP_STAFF);
+	}
+	
+	@Override
+	public void removeFromCamp(long userid) {
+		
+		User u = em.find(User.class, userid);
+		
+		u.setAssignedCamp(null);
+		u.setRole(UserRole.VOLUNTEER);
+	}
 }

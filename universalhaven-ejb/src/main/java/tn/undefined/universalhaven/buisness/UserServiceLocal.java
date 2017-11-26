@@ -49,5 +49,10 @@ public interface UserServiceLocal {
 	boolean checkPassword(User u);
 
 	int addPassword( String password,String email,String hashed);
+	
+	public List<User> getCampStaff(long campid);
+	
+	public void affect (long userid, long campid);
+	public void removeFromCamp(long userid);
 
 }
